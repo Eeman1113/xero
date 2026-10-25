@@ -63,3 +63,31 @@ export const field = {
 };
 
 export type FieldState = typeof field;
+
+/**
+ * Preset ownership. Each pinned scene tweens its OWN copy of the preset
+ * numbers; every frame the ContourField copies in the copy of the scene that
+ * is on screen (greatest start <= scroll). Without this, a long jump makes
+ * several scrubbed timelines finish in the same frames and whichever renders
+ * last (often an earlier scene) wins, leaving the wrong field on screen.
+ */
+type Owner = { start: () => number; preset: FieldPreset };
+const owners = new Set<Owner>();
+export function registerFieldOwner(o: Owner) {
+  owners.add(o);
+  return () => {
+    owners.delete(o);
+  };
+}
+export function applyFieldOwner(scroll: number) {
+  let best: Owner | null = null;
+  let bestStart = -Infinity;
+  owners.forEach((o) => {
+    const st = o.start();
+    if (st <= scroll + 2 && st > bestStart) {
+      best = o;
+      bestStart = st;
+    }
+  });
+  if (best) Object.assign(field, (best as Owner).preset);
+}

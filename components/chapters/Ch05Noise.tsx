@@ -158,7 +158,7 @@ export function buildCh05(api: SceneAPI, s: number): number {
   api.prompter(one(".c5-prompt"), s + 2.4, 2.4);
   // the long-form shares the screen with the orbit, so the orbit steps back
   tl.to(q(".c5-orbits, .c5-bg"), { opacity: small ? 0.3 : 0.5, duration: 0.5, ease: "sine.inOut" }, s + 2.3);
-  const end = s + dur + 0.4;
+  const end = s + dur + 0.05; // hand straight over to ch6 once the orbit has flown out
   tl.to(one(".c5-prompt"), { opacity: 0, duration: 0.3 }, end - 0.4);
   api.layerOut(layer, end + 0.1, 0.1);
   return end;

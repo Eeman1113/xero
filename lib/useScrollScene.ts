@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useLayoutEffect, type RefObject } from "react";
 import { gsap, ScrollTrigger } from "./gsap";
-import { field, PRESETS, type PresetName } from "./field";
+import { field, PRESETS, registerFieldOwner, type FieldPreset, type PresetName } from "./field";
 import { registerRegion } from "./hud";
 import { revealIn, revealOut } from "./reveal";
 import { REDUCED_QUERY, SMALL_QUERY } from "./motion";
@@ -97,6 +97,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
         const cues: Cue[] = [];
         const chapters: { id: string; time: number }[] = [];
         let preset: PresetName = opts.startPreset;
+        const fieldPreset: FieldPreset = { ...PRESETS[opts.startPreset] };
 
         const q = (s: string) => Array.from(root.querySelectorAll<HTMLElement>(s));
         const one = (s: string) => {
@@ -117,10 +118,10 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
             return time;
           },
           fieldTo: (name, at, duration = 1, ease = "sine.inOut") => {
-            // never start exactly at 0: a paused timeline sitting at t=0 must not
-            // write into the shared field (other scenes own it at that moment)
+            // tweens this scene's own preset copy; ContourField reads the copy
+            // of whichever scene is on screen (see registerFieldOwner)
             tl.fromTo(
-              field,
+              fieldPreset,
               { ...PRESETS[preset] },
               { ...PRESETS[name], duration, ease, immediateRender: false },
               Math.max(at, 0.002),
@@ -251,6 +252,8 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
           onRefresh: prime,
         });
 
+        const unregField = registerFieldOwner({ start: () => st.start, preset: fieldPreset });
+
         // HUD: map the actual scroll position inside this pin to a chapter
         const unreg = registerRegion({
           start: () => st.start,
@@ -265,6 +268,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
 
         return () => {
           unreg();
+          unregField();
           st.kill();
           tl.kill();
         };

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
-import { field, PRESETS } from "@/lib/field";
+import { field, PRESETS, applyFieldOwner } from "@/lib/field";
 import { prefersReduced, isSmall } from "@/lib/motion";
 
 /**
@@ -174,6 +174,7 @@ export default function ContourField() {
       mouse.y += (mouse.ty - mouse.y) * 0.08;
       mouse.on += (mouse.ton * (small ? 0 : 1) - mouse.on) * 0.05;
 
+      if (!reduced) applyFieldOwner(window.scrollY);
       const f = field;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = "#000";
