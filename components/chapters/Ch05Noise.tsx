@@ -156,8 +156,8 @@ export function buildCh05(api: SceneAPI, s: number): number {
   // the topic words step back so the long-form stays readable
   tl.to(one(".c5-words"), { opacity: 0.22, duration: 0.6, ease: "sine.inOut" }, s + 2.2);
   api.prompter(one(".c5-prompt"), s + 2.4, 2.4);
-  // phones: the long-form shares the screen with the orbit, so the orbit steps back
-  if (small) tl.to(q(".c5-orbits, .c5-bg"), { opacity: 0.3, duration: 0.5, ease: "sine.inOut" }, s + 2.3);
+  // the long-form shares the screen with the orbit, so the orbit steps back
+  tl.to(q(".c5-orbits, .c5-bg"), { opacity: small ? 0.3 : 0.5, duration: 0.5, ease: "sine.inOut" }, s + 2.3);
   const end = s + dur + 0.4;
   tl.to(one(".c5-prompt"), { opacity: 0, duration: 0.3 }, end - 0.4);
   api.layerOut(layer, end + 0.1, 0.1);

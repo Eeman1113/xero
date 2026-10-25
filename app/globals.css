@@ -800,7 +800,7 @@ html.lenis body {
   text-transform: none;
   opacity: 0;
 }
-.q.q0 { top: 20%; color: var(--yellow); }
+.q.q0 { top: 47%; color: var(--yellow); }
 .q.q1 { top: 34%; font-size: clamp(14px, 1.6vw, 22px); }
 .q.q2 { top: 56%; color: var(--green); }
 .q.q3 { top: 90%; color: var(--cyan); }
@@ -1631,7 +1631,8 @@ html.lenis body {
 /* ============================================================
    MOBILE — simplify layouts + the heaviest effects
    ============================================================ */
-@media (max-width: 767px) {
+/* phones + portrait tablets (keep in sync with SMALL_QUERY in lib/motion.ts) */
+@media (max-width: 767px), (max-width: 1100px) and (orientation: portrait) {
   .desk-only {
     display: none !important;
   }
@@ -1836,6 +1837,92 @@ html.lenis body {
   }
   .ft-meta {
     flex-direction: column;
+  }
+}
+
+/* portrait tablets: same portrait layout as phones, scaled up for the bigger canvas */
+@media (min-width: 600px) and (max-width: 1100px) and (orientation: portrait) {
+  .p-line {
+    font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+  }
+  .prompter.side-right,
+  .prompter.side-left {
+    height: 42vh;
+  }
+  .headline {
+    font-size: clamp(2rem, 5.6vw, 3.4rem);
+  }
+  .headline.sticker {
+    font-size: clamp(1.5rem, 3.6vw, 2.4rem);
+  }
+  .bub {
+    width: 26vw;
+  }
+  .bub-t {
+    font-size: 15px;
+  }
+  .c2-cam {
+    width: 48vw;
+  }
+  .pol {
+    width: 30vw;
+  }
+  .c4-kb {
+    width: 70vw;
+  }
+  .xk {
+    width: 10vw;
+  }
+  .card {
+    width: 24vw;
+  }
+  .cb-k {
+    font-size: 9px;
+  }
+  .cb-topics {
+    font-size: 1.25rem;
+  }
+  .cb-go {
+    padding: 7px 12px;
+    font-size: 10px;
+  }
+  .c7-collage {
+    width: min(80vw, 56vh);
+    left: calc(50% - min(40vw, 28vh));
+    top: calc(52% - min(40vw, 28vh));
+  }
+  .c7-van {
+    width: 22vw;
+  }
+  .stk {
+    width: 20vw;
+  }
+  /* Listen: the cover shouldn't eat a whole screen on a tablet */
+  .ls-cover {
+    width: min(64vw, 520px);
+    margin-inline: auto;
+  }
+}
+
+/* landscape tablets / small laptops: tighten the desktop compositions */
+@media (min-width: 768px) and (max-width: 1199px) and (orientation: landscape) {
+  .c7-text {
+    width: 38vw;
+  }
+  .c7-text .headline {
+    font-size: clamp(1.8rem, 3.6vw, 3rem);
+  }
+  .c7-collage {
+    width: min(72vh, 46vw);
+    left: calc(50% - min(36vh, 23vw));
+    top: calc(50% - min(36vh, 23vw));
+  }
+  .c7-sign {
+    width: 14vw;
+    bottom: 5vh;
+  }
+  .bub-t {
+    font-size: 12px;
   }
 }
 

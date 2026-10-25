@@ -107,7 +107,7 @@ export function buildCh02(api: SceneAPI, s: number): number {
     tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.out", immediateRender: false }, at);
     // clear out before the shutter so nothing drifts under the HUD or into ch3
     // (on phones the long-form takes the lower half, so clear out before it starts)
-    tl.to(el, { opacity: 0, duration: 0.5, ease: "power1.in" }, (small ? s + 1.5 : s + 3.6) + i * 0.03);
+    tl.to(el, { opacity: 0, duration: 0.5, ease: "power1.in" }, (small ? s + 1.5 : s + 2.9) + i * 0.03);
   });
 
   api.reveal(one(".c2-text .headline"), s + 0.8, s + 2.0);

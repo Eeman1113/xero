@@ -88,7 +88,7 @@ export function buildCh07(api: SceneAPI, s: number): number {
   // the collage assembles: objects come in from far away, then the camera pulls back
   const box = one(".c7-collage");
   const items = q(".col-item");
-  tl.fromTo(box, { scale: 2.4, x: small ? 0 : "6vw" }, { scale: 1, x: small ? 0 : "16vw", duration: 3.4, ease: "power2.inOut", immediateRender: false }, s + 0.3);
+  tl.fromTo(box, { scale: 2.4, x: small ? 0 : "6vw" }, { scale: 1, x: small ? 0 : () => (window.innerWidth < 1200 ? "21vw" : "16vw"), duration: 3.4, ease: "power2.inOut", immediateRender: false }, s + 0.3);
   items.forEach((it, i) => {
     const cx = parseFloat(it.style.left) / 100 - 0.5;
     const cy = parseFloat(it.style.top) / 100 - 0.5;
