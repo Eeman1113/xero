@@ -122,7 +122,8 @@ export function buildCh06(api: SceneAPI, s: number): number {
   const cards = q(".card");
   tl.fromTo(fan, { y: "70vh", rotation: -12 }, { y: 0, rotation: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, s + 0.05);
 
-  const spreadX = small ? [-27, -9, 9, 27] : [-30, -10, 10, 30];
+  // phones: spread wider than the card width so the flipped backs never cover each other
+  const spreadX = small ? [-34, -11.5, 11.5, 34] : [-30, -10, 10, 30];
   const rot = [-16, -5, 5, 16];
   const lift = [5, 0, 0, 5];
   cards.forEach((c, i) => {

@@ -1776,10 +1776,10 @@ html.lenis body {
     display: none;
   }
   .card {
-    width: 30vw;
+    width: 22.5vw;
   }
   .card-back {
-    padding: 8px;
+    padding: 6px;
     gap: 5px;
     border-radius: 10px;
   }
@@ -1788,7 +1788,7 @@ html.lenis body {
     letter-spacing: 0.1em;
   }
   .cb-topics {
-    font-size: 0.82rem;
+    font-size: 0.74rem;
     overflow-wrap: anywhere;
   }
   .cb-go {
@@ -1874,7 +1874,7 @@ html.lenis body {
     width: 10vw;
   }
   .card {
-    width: 24vw;
+    width: 21vw;
   }
   .cb-k {
     font-size: 9px;
