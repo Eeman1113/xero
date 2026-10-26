@@ -215,9 +215,9 @@ html.lenis body {
   left: 0;
   right: 0;
   top: 0;
-  height: 132px;
+  height: 140px;
   /* soft backing: anything scrolling up under the wordmark fades out before it reaches it */
-  background: linear-gradient(rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.55) 58%, rgba(0, 0, 0, 0.18) 82%, transparent);
+  background: linear-gradient(#000, rgba(0, 0, 0, 0.97) 36%, rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0.25) 82%, transparent);
 }
 .hud-mark {
   position: absolute;
