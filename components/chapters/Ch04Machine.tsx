@@ -97,14 +97,14 @@ export function buildCh04(api: SceneAPI, s: number): number {
   const { tl, q, one, small } = api;
   api.chapter("04", s);
   const layer = one(".ch4");
-  api.layerIn(layer, s, 0.2);
+  api.layerIn(layer, s, 0.05);
   api.fieldTo("machine", s, 1);
 
   // the keyboard is the opening focal point: it rises out of the dark right away
   const kb = one(".c4-kb");
   tl.fromTo(kb, { y: "26vh", rotationX: 40, scale: 0.72, transformPerspective: 900 },
     { y: small ? "4vh" : "14vh", rotationX: 6, scale: small ? 1 : 1.12, duration: 1.0, ease: "power2.out", immediateRender: false }, s);
-  tl.fromTo(kb, { opacity: 0 }, { opacity: 1, duration: 0.22, immediateRender: false }, s);
+  tl.fromTo(kb, { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, s);
   tl.to(kb, { y: small ? "-14vh" : "8vh", x: small ? 0 : "18vw", rotationX: 2, rotationZ: -3, scale: small ? 0.8 : 1, duration: 1, ease: "sine.inOut" }, s + 1.7);
 
   // keycaps fly out of the keyboard toward (and past) the viewer

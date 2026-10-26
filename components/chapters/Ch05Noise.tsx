@@ -320,7 +320,7 @@ export function buildCh05(api: SceneAPI, s: number): number {
   tl.to(roll, { opacity: 0, y: "-8vh", duration: 0.25, ease: "power2.in" }, b + 1.0);
 
   const tsq = one(".ar-tsq");
-  tl.fromTo(tsq, { x: "-60vw", rotation: -90 }, { x: 0, rotation: -90, duration: 0.6, ease: "power3.out", immediateRender: false }, b + 0.85);
+  tl.fromTo(tsq, { x: "-110vw", rotation: -90 }, { x: 0, rotation: -90, duration: 0.6, ease: "power3.out", immediateRender: false }, b + 0.85);
   tl.to(tsq, { x: "6vw", duration: 1.4, ease: "sine.inOut" }, b + 1.45);
 
   // compass drops in, then swings round its needle while the circle draws

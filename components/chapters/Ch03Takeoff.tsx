@@ -129,12 +129,13 @@ export function buildCh03(api: SceneAPI, s: number): number {
   tl.set(plane, { x: "-72vw", y: "-26vh", scale: 0.28, rotation: -2, opacity: 1 }, end - 1.12);
   tl.to(plane, { x: "74vw", y: "-33vh", scale: 0.3, rotation: -6, duration: 0.9, ease: "sine.inOut" }, end - 1.1);
   notes.forEach((n, i) => {
-    const at = end - 0.76 + i * 0.09;
+    const at = end - 0.5 + i * 0.07;
     // lift a corner first (peel), then flutter up and away on the wake
     tl.to(n, { skewY: -9, scaleY: 0.9, rotation: tilt[i] - 14, transformOrigin: "100% 0%", duration: 0.12, ease: "power1.out" }, at);
-    tl.to(n, { x: `${22 + i * 8}vw`, y: `${-62 - i * 6}vh`, rotation: tilt[i] + (i % 2 ? 160 : -200), skewX: 18, skewY: 6, scale: 0.6, opacity: 0, duration: 0.55, ease: "power1.in" }, at + 0.12);
+    tl.to(n, { x: `${22 + i * 8}vw`, y: `${-62 - i * 6}vh`, rotation: tilt[i] + (i % 2 ? 160 : -200), skewX: 18, skewY: 6, scale: 0.6, opacity: 0, duration: 0.42, ease: "power1.in" }, at + 0.12);
   });
   tl.to(one(".c3-prompt"), { opacity: 0, duration: 0.3 }, end - 0.8);
-  api.layerOut(layer, end + 0.1, 0.1);
+  // the last sticky is still fluttering out as the keyboard rises (no empty beat)
+  api.layerOut(layer, end + 0.17, 0.03);
   return end;
 }
