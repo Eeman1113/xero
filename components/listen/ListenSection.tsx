@@ -12,7 +12,7 @@ import { revealIn } from "@/lib/reveal";
 import { registerRegion } from "@/lib/hud";
 import { prefersReduced } from "@/lib/motion";
 import { PLAY_EVENT } from "../chapters/Ch08PressPlay";
-import type { SiteEpisode, SiteFeed } from "@/lib/feedTypes";
+import { episodeAnchors, type SiteEpisode, type SiteFeed } from "@/lib/feedTypes";
 
 const ICONS: Record<string, string> = {
   youtube: "M10 8.5v7l6-3.5-6-3.5Z",
@@ -89,17 +89,7 @@ export default function ListenSection({ feed }: { feed: SiteFeed }) {
   const ref = useRef<HTMLElement>(null);
   const episodes = feed.episodes.slice(0, MAX_EPISODES);
   // S2 episodes also answer to #ep-e1, #ep-e2 … (the ch6 card backs link there)
-  const anchors = (() => {
-    const used = new Set<string>();
-    return episodes.map((ep) => {
-      const nice = ep.season === 2 && ep.episode ? `ep-e${ep.episode}` : "";
-      if (nice && !used.has(nice)) {
-        used.add(nice);
-        return nice;
-      }
-      return `ep-${ep.videoId}`;
-    });
-  })();
+  const anchors = episodeAnchors(episodes);
   const links = [
     { id: "youtube", label: "YouTube", href: feed.youtubeUrl },
     { id: "spotify", label: "Spotify", href: feed.spotifyUrl },

@@ -10,17 +10,55 @@ import { IMAGES, OBJECTS } from "@/lib/assets";
 import type { SceneAPI } from "@/lib/useScrollScene";
 import { scrollToTarget } from "@/lib/lenis";
 import { prefersReduced } from "@/lib/motion";
+import { useFeed } from "@/lib/feedContext";
+import { episodeAnchors } from "@/lib/feedTypes";
 
 type Back =
-  | { kind: "episode"; ep: "e1" | "e2"; label: string; thumb: string }
+  | { kind: "episode"; label: string; thumb: string; anchor: string; title: string }
+  | { kind: "soon"; label: string }
   | { kind: "topic"; label: string; lines: string[] };
 
-const CARDS: { face: "card_1" | "card_2" | "card_3" | "card_4"; back: Back }[] = [
-  { face: "card_1", back: { kind: "episode", ep: "e1", label: "Season 2 · Episode 1", thumb: IMAGES.e1.src } },
-  { face: "card_2", back: { kind: "topic", label: "On the table", lines: ["AI", "Government", "Architecture"] } },
-  { face: "card_3", back: { kind: "topic", label: "Also on the table", lines: ["Games", "Culture", "??? (unplanned)"] } },
-  { face: "card_4", back: { kind: "episode", ep: "e2", label: "Season 2 · Episode 2", thumb: IMAGES.e2.src } },
-];
+type Face = "card_1" | "card_2" | "card_3" | "card_4";
+
+/** "Season 2 · Episode 1" that only ever breaks at the dot */
+const epLabel = (season: number, episode: number) => `Season\u00a0${season} · Episode\u00a0${episode}`;
+
+/** The two outer aces are episode cards, built from the same filtered feed as the
+ *  Listen section: the latest real episode, then the one before it — or, if
+ *  there isn't one yet, a "coming soon" card with no link. */
+function useCards(): { face: Face; back: Back }[] {
+  const feed = useFeed();
+  const eps = feed?.episodes.slice(0, 6) ?? [];
+  const anchors = episodeAnchors(eps);
+  const epBack = (i: number): Back | null => {
+    const e = eps[i];
+    if (!e) return null;
+    return {
+      kind: "episode",
+      label: e.season && e.episode ? epLabel(e.season, e.episode) : "Latest episode",
+      thumb: e.thumb,
+      anchor: anchors[i],
+      title: e.displayTitle,
+    };
+  };
+  let first: Back;
+  let last: Back;
+  if (eps.length) {
+    first = epBack(0)!;
+    const next = eps[0].season && eps[0].episode ? epLabel(eps[0].season, eps[0].episode + 1) : "Next episode";
+    last = epBack(1) ?? { kind: "soon", label: next };
+  } else {
+    // feed unreachable at build time: the bundled S2 previews in the Listen section
+    first = { kind: "episode", label: epLabel(2, 1), thumb: IMAGES.e1.src, anchor: "ep-e1", title: "Season 2 · Episode 1" };
+    last = { kind: "episode", label: epLabel(2, 2), thumb: IMAGES.e2.src, anchor: "ep-e2", title: "Season 2 · Episode 2" };
+  }
+  return [
+    { face: "card_1", back: first },
+    { face: "card_2", back: { kind: "topic", label: "On the table", lines: ["AI", "Government", "Architecture"] } },
+    { face: "card_3", back: { kind: "topic", label: "Also on the table", lines: ["Games", "Culture", "??? (unplanned)"] } },
+    { face: "card_4", back: last },
+  ];
+}
 
 /** reactions to the flips (UI flavour text) */
 const REACTIONS = [
@@ -54,15 +92,18 @@ export function Ch06Layer() {
     if (target.closest("a")) return;
     flipCard(card, !card.classList.contains("is-flipped"));
   };
+  const cards = useCards();
+  const aria = (b: Back) =>
+    b.kind === "episode" ? `${b.label}: ${b.title}` : b.kind === "soon" ? `${b.label}, coming soon` : `${b.label}: ${b.lines.join(", ")}`;
   return (
     <div className="layer ch6" data-ch="06">
       <div className="copy-col c6-text">
         <Reveal as="h2" className="headline" text={STORY.ch6.copy} />
       </div>
       <div className="c6-fan">
-        {CARDS.map((c, i) => (
+        {cards.map((c, i) => (
           <div key={c.face} className={`card card${i}`} onClick={onCard} role="button" tabIndex={0}
-            aria-label={c.back.kind === "episode" ? c.back.label : c.back.lines.join(", ")}
+            aria-label={`Flip card: ${aria(c.back)}`}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flipCard(e.currentTarget, !e.currentTarget.classList.contains("is-flipped")); } }}>
             <div className="card-inner">
               <div className="card-face">
@@ -76,15 +117,21 @@ export function Ch06Layer() {
                   <>
                     <span className="mono cb-k">{c.back.label}</span>
                     <img src={c.back.thumb} alt="" className="cb-thumb" loading="lazy" />
-                    <a className="cb-go" href={`#ep-${c.back.ep}`}
+                    <a className="cb-go" href={`#${c.back.anchor}`}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        const el = document.getElementById(`ep-${(c.back as { ep: string }).ep}`);
+                        const el = document.getElementById((c.back as { anchor: string }).anchor);
                         scrollToTarget(el ?? "#listen", 3);
                       }}>
                       ▶ Listen
                     </a>
+                  </>
+                ) : c.back.kind === "soon" ? (
+                  <>
+                    <span className="mono cb-k">{c.back.label}</span>
+                    <span className="cb-soon display">Coming<br />soon</span>
+                    <span className="mono cb-soon-k">NEXT ON THE TAPE</span>
                   </>
                 ) : (
                   <>
@@ -132,6 +179,11 @@ export function buildCh06(api: SceneAPI, s: number): number {
     // portrait: they flip once they have re-dealt into the 2×2 grid (below)
     const flipAt = small ? s + 2.75 + i * 0.3 : s + 2.0 + i * 0.4;
     api.cue(flipAt, () => flipCard(c, true), () => flipCard(c, false));
+    // keyboard: each card (and its Listen link) once the whole hand is face-up
+    const focusAt = small ? s + 3.8 : s + 3.4;
+    api.focusStop(c, focusAt);
+    const go = c.querySelector<HTMLElement>(".cb-go");
+    if (go) api.focusStop(go, focusAt);
   });
 
   api.reveal(one(".c6-text .headline"), s + 0.08, s + 2.4);
