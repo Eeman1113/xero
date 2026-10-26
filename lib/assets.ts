@@ -9,132 +9,174 @@
 export const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export type ObjectName =
+  | "ai_chip"
   | "airplane"
-  | "alien_eye"
-  | "apple"
-  | "banana_bowl"
-  | "camera"
+  | "auto_body"
+  | "auto_wheel"
+  | "auto_wheel_b"
+  | "ballot_box_empty"
+  | "ballot_hand"
+  | "banana"
+  | "blueprint_roll"
+  | "blueprint_sheet"
+  | "brutalist"
+  | "bubble_1"
+  | "bubble_2"
+  | "bubble_3"
+  | "bubble_4"
+  | "camera_body"
+  | "camera_button"
+  | "camera_lens"
+  | "camera_photo"
   | "card_1"
   | "card_2"
   | "card_3"
   | "card_4"
-  | "cards"
-  | "club"
+  | "cassette_body"
+  | "cassette_reel"
+  | "cassette_reel_b"
+  | "chai"
+  | "chawl"
+  | "cloud_1"
+  | "cloud_2"
   | "coconut_oil"
-  | "farcry"
-  | "keyboard"
-  | "knife"
-  | "marker"
-  | "mythbusters"
-  | "nokia"
-  | "splatter"
-  | "tablet"
-  | "van"
-  | "microphone"
-  | "polaroid_photos"
-  | "sticky_notes"
   | "coffee_mug"
-  | "headphones"
+  | "compass"
   | "controller"
-  | "robot_head"
-  | "ballot_box"
-  | "tower"
-  | "banana"
-  | "road_sign"
-  // multi-part kits (animated in pieces)
+  | "earbuds"
+  | "glass_tower"
+  | "gpu_body"
+  | "gpu_fan"
+  | "gpu_fan_b"
+  | "headphones"
+  | "highway_board"
+  | "keyboard"
+  | "keycap_e"
+  | "keycap_enter"
+  | "keycap_esc"
+  | "keycap_o"
+  | "keycap_r"
+  | "keycap_space"
+  | "keycap_x"
+  | "laptop"
+  | "mic_body"
+  | "mic_cable"
+  | "mic_popfilter"
+  | "microphone"
+  | "nokia"
+  | "nokia_button"
   | "polaroid_1"
   | "polaroid_2"
   | "polaroid_3"
   | "polaroid_4"
-  | "cassette_body"
-  | "cassette_reel"
-  | "van_body"
-  | "van_wheel"
-  | "ballot_box_empty"
-  | "ballot_hand"
-  | "keycap_x"
-  | "keycap_e"
-  | "keycap_r"
-  | "keycap_o"
-  | "keycap_esc"
-  | "keycap_enter"
+  | "road_sign"
+  | "robot_head"
+  | "robotarm_base"
+  | "robotarm_lower"
+  | "robotarm_upper"
+  | "samosa"
+  | "scale_model"
+  | "scale_ruler"
+  | "server_rack"
+  | "set_square"
   | "sticky_1"
   | "sticky_2"
   | "sticky_3"
-  | "bubble_1"
-  | "bubble_2"
-  | "bubble_3"
-  | "bubble_4";
+  | "t_square"
+  | "vada_pav"
+  | "van_body"
+  | "van_wheel"
+  | "van_wheel_b";
 
-/** "neon" = new colour art (glowing contour fills); "lineart" = original white cut-outs from the cover */
-export type ArtStyle = "neon" | "lineart";
-/** `src` is the original PNG (fallback); `webp` is a generated, ~7x lighter copy (max 1200px) served first. */
-type Entry = { src: string; webp: string; alt: string; usedIn: string[]; style: ArtStyle };
+/** `src` is the PNG fallback; `webp` is the lighter copy served first. */
+type Entry = { src: string; webp: string; alt: string; usedIn: string };
 
-const LINEART = new Set<ObjectName>(["alien_eye", "apple", "banana_bowl", "cards", "club", "farcry", "marker", "mythbusters", "splatter", "tablet"]);
-
-const o = (name: ObjectName, alt: string, usedIn: string[]): [ObjectName, Entry] => [
+/* Every object is a posterized photo cut-out (v3 art). Multi-part kits are
+   assembled + animated per part (see components/kits). */
+const o = (name: ObjectName, alt: string, usedIn: string): [ObjectName, Entry] => [
   name,
-  { src: `${BASE}/objects/${name}.png`, webp: `${BASE}/objects/${name}.webp`, alt, usedIn, style: LINEART.has(name) ? "lineart" : "neon" },
+  { src: `${BASE}/objects/${name}.png`, webp: `${BASE}/objects/${name}.webp`, alt, usedIn },
 ];
 
 export const OBJECTS: Record<ObjectName, Entry> = Object.fromEntries([
-  o("airplane", "Line-art airplane", ["03 takeoff (crosses screen)", "07 collage"]),
-  o("alien_eye", "Black blob creature with one eye", ["05 dim background fragment", "07 collage"]),
-  o("apple", "Apple logo", ["05 dim background fragment", "07 collage"]),
-  o("banana_bowl", "Bowl of bananas", ["05 dim background fragment"]),
-  o("camera", "Instant camera", ["02 memories (hero)", "07 collage"]),
-  o("card_1", "Ace of spades", ["06 card fan (1)"]),
-  o("card_2", "Ace of hearts", ["06 card fan (2)"]),
-  o("card_3", "Ace of diamonds", ["06 card fan (3)"]),
-  o("card_4", "Ace of clubs", ["06 card fan (4)"]),
-  o("cards", "Stack of ace playing cards", ["05 dim background fragment", "07 collage"]),
-  o("club", "Club suit", ["02 fragment", "05 dim background fragment", "06 floating", "07 collage"]),
-  o("coconut_oil", "Coconut oil bottle", ["05 hero orbit (CULTURE)", "07 collage"]),
-  o("farcry", "Stacked FARCRY wordmarks", ["05 dim background fragment", "07 collage"]),
-  o("keyboard", "Mechanical keyboard", ["04 machine (rises)", "07 collage"]),
-  o("knife", "Butterfly knife", ["05 mid orbit", "07 collage"]),
-  o("marker", "Paint marker", ["05 dim background fragment", "07 collage"]),
-  o("mythbusters", "MYTHBUSTERS sign", ["05 dim background fragment", "07 collage"]),
-  o("nokia", "Nokia 3310", ["04 machine (side)", "05 hero orbit (CULTURE)", "07 collage"]),
-  o("splatter", "Ink splatter", ["05 dim background fragment", "07 collage"]),
-  o("tablet", "Drawing tablet", ["02 fragment", "05 dim background fragment", "07 collage"]),
-  o("van", "Maruti Omni van (faces right)", ["07 drives left→right along a contour line", "07 collage"]),
-  o("microphone", "Microphone", ["04 machine (back to the mic)", "08 press play"]),
-  o("polaroid_photos", "Polaroid photos", ["02 camera dissolves into these"]),
-  o("sticky_notes", "Sticky notes with passwords", ["03 'suspicious number of passwords'"]),
-  o("coffee_mug", "Coffee mug", ["02 fragment", "04 machine"]),
-  o("controller", "Game controller", ["05 hero orbit (GAMES)"]),
-  o("robot_head", "Robot head", ["05 hero orbit (AI)"]),
-  o("ballot_box", "Ballot box", ["05 hero orbit (GOVERNMENT)"]),
-  o("tower", "Tall tower building", ["05 hero orbit (ARCHITECTURE)"]),
-  o("banana", "Bunch of bananas", ["05 hero orbit (CULTURE)", "07 collage"]),
-  o("road_sign", "Highway sign with a winding-road arrow", ["07 slides in as the van approaches"]),
-  o("headphones", "Headphones", ["02 fragment", "05 hero orbit (CULTURE)", "08 press play"]),
-  // ---- multi-part kits ----
-  o("polaroid_1", "Polaroid of a sunset city skyline", ["02 printed by the camera, flips to a caption"]),
-  o("polaroid_2", "Polaroid of two friends on a rooftop at night", ["02 printed by the camera, flips to a caption"]),
-  o("polaroid_3", "Polaroid of a game controller on a bed", ["02 printed by the camera, flips to a caption"]),
-  o("polaroid_4", "Polaroid of a winding road at night", ["02 printed by the camera, flips to a caption"]),
-  o("cassette_body", "Cassette tape", ["02 tape motif", "Listen section tape"]),
-  o("cassette_reel", "Cassette reel", ["02 + Listen: spins behind the cassette windows"]),
-  o("van_body", "Maruti Omni van body (faces right)", ["07 rides the contour line"]),
-  o("van_wheel", "Van wheel", ["07 two wheels, rotate with distance travelled"]),
-  o("ballot_box_empty", "Ballot box", ["05 GOVERNMENT orbit (receives the slip)"]),
-  o("ballot_hand", "Hand dropping a ballot slip", ["05 GOVERNMENT: drops the slip into the slot"]),
-  o("keycap_x", "X keycap", ["04 lands in the XERO row"]),
-  o("keycap_e", "E keycap", ["04 lands in the XERO row"]),
-  o("keycap_r", "R keycap", ["04 lands in the XERO row"]),
-  o("keycap_o", "O keycap", ["04 lands in the XERO row"]),
-  o("keycap_esc", "ESC keycap", ["04 floating accent"]),
-  o("keycap_enter", "ENTER keycap", ["04 floating accent, pulses at 'back to the microphone'"]),
-  o("sticky_1", "Pink sticky note", ["03 slaps on at 'passwords', peels off"]),
-  o("sticky_2", "Yellow sticky note", ["03 slaps on at 'passwords', peels off"]),
-  o("sticky_3", "Cyan sticky note", ["03 slaps on at 'passwords', peels off"]),
-  o("bubble_1", "Round speech bubble", ["04 question bubble", "06 reaction"]),
-  o("bubble_2", "Rounded-rectangle speech bubble", ["04 question bubble"]),
-  o("bubble_3", "Spiky shout bubble", ["04 question bubble", "06 reaction"]),
-  o("bubble_4", "Thought cloud bubble", ["04 question bubble", "06 reaction"]),
+  o("ai_chip", "AI chip", "05 AI lab: picked up by the robot arm"),
+  o("airplane", "Passenger airplane", "03 takeoff, 07 collage"),
+  o("auto_body", "Mumbai auto-rickshaw", "07 overtakes on a contour line"),
+  o("auto_wheel", "Auto-rickshaw wheel", "07 auto rear wheel"),
+  o("auto_wheel_b", "Auto-rickshaw wheel", "07 auto front wheel"),
+  o("ballot_box_empty", "Ballot box", "05 GOVERNMENT orbit"),
+  o("ballot_hand", "Hand dropping a ballot slip", "05 GOVERNMENT drop"),
+  o("banana", "Bunch of bananas", "05 culture, 07 collage"),
+  o("blueprint_roll", "Rolled-up blueprint", "05 architect: unrolls"),
+  o("blueprint_sheet", "Blueprint floor plan", "05 architect"),
+  o("brutalist", "Brutalist concrete building", "05 architect: rises"),
+  o("bubble_1", "Round speech bubble", "04 / 06 bubbles"),
+  o("bubble_2", "Rounded speech bubble", "04 bubbles"),
+  o("bubble_3", "Spiky shout bubble", "04 / 06 bubbles"),
+  o("bubble_4", "Thought bubble", "04 / 06 bubbles"),
+  o("camera_body", "Instant camera", "02 camera kit (lens hole is transparent)"),
+  o("camera_button", "Camera shutter button", "02 presses before each print"),
+  o("camera_lens", "Camera lens", "02 twists in the lens hole"),
+  o("camera_photo", "Undeveloped instant photo", "02 prints, then develops"),
+  o("card_1", "Ace of spades", "06 card fan"),
+  o("card_2", "Ace of hearts", "06 card fan"),
+  o("card_3", "Ace of diamonds", "06 card fan"),
+  o("card_4", "Ace of clubs", "06 card fan"),
+  o("cassette_body", "Cassette tape", "02 + Listen tape"),
+  o("cassette_reel", "Cassette reel", "reel behind the left window"),
+  o("cassette_reel_b", "Cassette reel", "reel behind the right window"),
+  o("chai", "Cutting chai", "05 culture (coded steam)"),
+  o("chawl", "Mumbai chawl building", "05 architect: rises"),
+  o("cloud_1", "Cloud", "03 parallax clouds"),
+  o("cloud_2", "Cloud", "03 parallax clouds"),
+  o("coconut_oil", "Coconut oil bottle", "05 culture"),
+  o("coffee_mug", "Coffee mug", "02 / 04 fragments"),
+  o("compass", "Drafting compass", "05 architect: draws a circle"),
+  o("controller", "Game controller", "02, 05 GAMES, 07 collage"),
+  o("earbuds", "Wireless earbuds", "02, 05 culture"),
+  o("glass_tower", "Glass office tower", "05 architect: rises"),
+  o("gpu_body", "Graphics card", "05 AI lab (fan holes transparent)"),
+  o("gpu_fan", "GPU fan", "05 AI lab"),
+  o("gpu_fan_b", "GPU fan", "05 AI lab"),
+  o("headphones", "Headphones", "02, 05, 08"),
+  o("highway_board", "Highway direction board", "07 slides past"),
+  o("keyboard", "Mechanical keyboard", "04 machine, 07 collage"),
+  o("keycap_e", "E keycap", "04 XERO row"),
+  o("keycap_enter", "ENTER keycap", "04 accent"),
+  o("keycap_esc", "ESC keycap", "04 accent"),
+  o("keycap_o", "O keycap", "04 XERO row"),
+  o("keycap_r", "R keycap", "04 XERO row"),
+  o("keycap_space", "Space bar keycap", "04 stamps down"),
+  o("keycap_x", "X keycap", "04 XERO row"),
+  o("laptop", "Laptop", "05 AI lab (screen shows a training run)"),
+  o("mic_body", "Studio microphone on a stand", "04 + 08 mic kit"),
+  o("mic_cable", "XLR cable", "04 + 08 mic kit"),
+  o("mic_popfilter", "Pop filter", "04 + 08 mic kit"),
+  o("microphone", "Studio microphone", "reference / reduced motion"),
+  o("nokia", "Nokia 3310", "02 nokia kit (LCD overlay)"),
+  o("nokia_button", "Nokia navigation key", "02 pressable"),
+  o("polaroid_1", "Polaroid of the Mumbai skyline at sunset", "02 prints"),
+  o("polaroid_2", "Polaroid of two friends on a rooftop at night", "02 prints"),
+  o("polaroid_3", "Polaroid of a controller on a bed", "02 prints"),
+  o("polaroid_4", "Polaroid of a coastal highway at dusk", "02 prints"),
+  o("road_sign", "Winding-road sign", "07 slides past"),
+  o("robot_head", "Robot head", "05 AI"),
+  o("robotarm_base", "Robot arm base", "05 AI lab arm"),
+  o("robotarm_lower", "Robot arm lower segment", "05 AI lab arm"),
+  o("robotarm_upper", "Robot arm upper segment with gripper", "05 AI lab arm"),
+  o("samosa", "Samosa", "05 culture"),
+  o("scale_model", "Architectural scale model", "05 architect"),
+  o("scale_ruler", "Scale ruler and pencil", "05 architect"),
+  o("server_rack", "Server rack", "05 AI lab (coded status LEDs)"),
+  o("set_square", "Set square", "05 architect"),
+  o("sticky_1", "Pink sticky note", "03 slaps on, peels off"),
+  o("sticky_2", "Yellow sticky note", "03 slaps on, peels off"),
+  o("sticky_3", "Green sticky note", "03 slaps on, peels off"),
+  o("t_square", "T-square", "05 architect"),
+  o("vada_pav", "Vada pav", "05 culture"),
+  o("van_body", "Maruti Omni van body (faces right)", "07 rides the contour line"),
+  o("van_wheel", "Van wheel", "07 rear wheel"),
+  o("van_wheel_b", "Van wheel", "07 front wheel"),
 ]) as Record<ObjectName, Entry>;
 
 export const IMAGES = {
