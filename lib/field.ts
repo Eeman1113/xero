@@ -42,6 +42,8 @@ export const PRESETS = {
   drafting: { amp: 0.18, freq: 0.6, swirl: 0.15, spread: 1.5, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 0.38, tilt: 0, highlightAmt: 0 },
   wildcard: { amp: 0.7, freq: 0.9, swirl: 0.8, spread: 1.2, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 0.55, tilt: 0.2, highlightAmt: 0 },
   journey: { amp: 0.85, freq: 0.9, swirl: 0.9, spread: 1.25, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 1, tilt: -0.1, highlightAmt: 1 },
+  /** journey long-form: the road line steps back so it never competes with the copy */
+  journeyCalm: { amp: 0.7, freq: 0.9, swirl: 0.85, spread: 1.25, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 0.55, tilt: -0.1, highlightAmt: 0 },
   play: { amp: 0.55, freq: 1, swirl: 0.5, spread: 1.1, depth: 0, ripple: 0, converge: 1, reveal: 1, opacity: 1, tilt: 0, highlightAmt: 0 },
 } satisfies Record<string, FieldPreset>;
 

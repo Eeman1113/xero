@@ -40,6 +40,42 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+/* keyboard: first stop in the page, visible only when focused */
+.skip-link {
+  position: fixed;
+  left: 50%;
+  top: 14px;
+  z-index: 200;
+  translate: -50% -160%;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: translate 0.2s ease;
+}
+.skip-link:focus-visible {
+  translate: -50% 0;
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.pol:focus-visible {
+  outline: none;
+}
+.pol:focus-visible .pol-inner {
+  outline: 2px solid var(--cyan);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+.cb-go:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
 /* a kit is shown only once all of its parts have decoded (see Experience) */
 [data-loading] > * {
   visibility: hidden;
@@ -179,8 +215,9 @@ html.lenis body {
   left: 0;
   right: 0;
   top: 0;
-  height: 120px;
-  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.45) 55%, transparent);
+  height: 132px;
+  /* soft backing: anything scrolling up under the wordmark fades out before it reaches it */
+  background: linear-gradient(rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.55) 58%, rgba(0, 0, 0, 0.18) 82%, transparent);
 }
 .hud-mark {
   position: absolute;
@@ -1119,6 +1156,22 @@ html.lenis body {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+}
+.cb-soon {
+  margin: auto 0;
+  font-size: clamp(1.5rem, 2.6vw, 2.6rem);
+  line-height: 0.95;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cb-soon-k {
+  color: var(--dim);
+  font-size: 10px;
+}
+.cb-k {
+  text-wrap: balance;
 }
 .cb-topics {
   list-style: none;
@@ -2353,9 +2406,10 @@ html.lenis body {
     top: auto;
     left: var(--gutter);
     right: var(--gutter);
-    bottom: 0;
+    /* clear of the LISTEN pill (16px + ~34px) */
+    bottom: 60px;
     width: auto;
-    height: 46vh;
+    height: 42vh;
   }
   .prompter.panel {
     padding: 0;
@@ -2475,6 +2529,12 @@ html.lenis body {
     font-size: 0.74rem;
     overflow-wrap: anywhere;
   }
+  .cb-soon {
+    font-size: 0.95rem;
+  }
+  .cb-soon-k {
+    font-size: 7px;
+  }
   .cb-go {
     padding: 5px 8px;
     font-size: 8px;
@@ -2486,7 +2546,11 @@ html.lenis body {
     bottom: 4px;
   }
   .prompter.band {
-    height: 32vh;
+    bottom: 60px;
+    height: 30vh;
+  }
+  .tape.t1 {
+    display: none;
   }
   /* portrait: the long-form owns the lower half, the collage the upper half */
   .c7-collage {
@@ -2641,7 +2705,8 @@ html.lenis body {
 }
 @media (min-width: 600px) and (max-width: 1100px) and (orientation: portrait) {
   .ai-arm { left: 52vw; width: 15vw; }
-  .ai-laptop { left: 6vw; top: 38vh; width: 50vw; }
+  .ai-laptop { left: 6vw; top: 41vh; width: 50vw; }
+  .ai-nn { width: 40vw; top: 20vh; }
   .ai-gpu { width: 34vw; }
   .ar-sheet { left: 12vw; width: 76vw; }
   .ar-model { left: 32vw; top: 64vh; width: 36vw; }

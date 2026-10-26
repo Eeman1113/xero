@@ -74,16 +74,24 @@ export function buildCh07(api: SceneAPI, s: number): number {
 
   /* ---- beat A: the road (s → s+2.7). The van and the auto ride their
      contour lines all the way across; the roadside passes by. ---- */
+  // portrait: the long-form owns the lower band from s + 1.9, so both riders
+  // finish their run (and leave the frame) before it starts, and the auto rides
+  // a line ABOVE the van so it never drops into the copy
   const fol = field.follower;
+  const vanEnd = small ? s + 1.8 : s + 2.7;
   tl.fromTo(fol, { t: 0.03 }, { t: 0.12, duration: 0.3, immediateRender: false }, s);
   tl.fromTo(fol, { on: 0 }, { on: 1, duration: 0.06, immediateRender: false }, s);
-  tl.to(fol, { t: 1.06, duration: 2.4, ease: "sine.inOut" }, s + 0.3);
-  tl.to(fol, { on: 0, duration: 0.05 }, s + 2.76);
-  // the auto: starts behind on a nearer line and overtakes (Mumbai rules)
+  tl.to(fol, { t: 1.12, duration: vanEnd - (s + 0.3), ease: "sine.inOut" }, s + 0.3);
+  tl.to(fol, { on: 0, duration: 0.05 }, vanEnd + 0.02);
+  // the auto: starts behind and overtakes (Mumbai rules)
   const f2 = field.follower2;
+  f2.dl = small ? -3 : 5;
+  const autoEnd = small ? s + 1.6 : s + 2.35;
   tl.fromTo(f2, { on: 0, t: -0.12 }, { on: 1, t: -0.02, duration: 0.25, immediateRender: false }, s + 0.4);
-  tl.to(f2, { t: 1.12, duration: 1.7, ease: "power1.in" }, s + 0.65);
-  tl.to(f2, { on: 0, duration: 0.05 }, s + 2.36);
+  tl.to(f2, { t: 1.16, duration: autoEnd - (s + 0.65), ease: "power1.in" }, s + 0.65);
+  tl.to(f2, { on: 0, duration: 0.05 }, autoEnd + 0.01);
+  // once the road beat is over the highlighted line steps back behind the copy
+  api.fieldTo("journeyCalm", s + 2.75, 0.5);
 
   // roadside: the board is far away (slow, high, fades into the distance before
   // it reaches the headline); the sign is close (fast, low) and crosses fully
@@ -103,8 +111,9 @@ export function buildCh07(api: SceneAPI, s: number): number {
     const cx = parseFloat(it.style.left) / 100 - 0.5;
     const cy = parseFloat(it.style.top) / 100 - 0.5;
     tl.fromTo(it, { x: `${cx * 90}%`, y: `${cy * 90}%`, scale: 0.6, opacity: 0, rotation: (i % 2 ? 1 : -1) * 18 },
-      { x: 0, y: 0, scale: 1, opacity: 1, rotation: 0, duration: 0.8, ease: "power3.out", immediateRender: false },
-      b + i * 0.085);
+      { x: 0, y: 0, scale: 1, opacity: 1, rotation: 0, duration: 0.6, ease: "power3.out", immediateRender: false },
+      // the whole cover is assembled while the first lines are read (never half-built for long)
+      b + i * 0.05);
   });
 
   api.reveal(one(".c7-text .headline"), s + 0.02, s + 2.0);

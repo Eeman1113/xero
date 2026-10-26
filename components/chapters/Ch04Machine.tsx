@@ -125,9 +125,11 @@ export function buildCh04(api: SceneAPI, s: number): number {
   q(".c4-qs .q").forEach((el, i) => {
     const dir = i % 2 ? -1 : 1;
     const at = s + 0.4 + i * 0.25;
-    tl.fromTo(el, { x: `${dir * 70}vw` }, { x: `${-dir * 70}vw`, duration: 1.9, immediateRender: false }, at);
-    tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.4, immediateRender: false }, at);
-    tl.to(el, { opacity: 0, duration: 0.4 }, at + 1.4);
+    // a short drift that fades in and out INSIDE the frame: no phrase is ever cut by an edge
+    const span = small ? 14 : 26;
+    tl.fromTo(el, { x: `${dir * span}vw` }, { x: `${-dir * span}vw`, duration: 1.9, immediateRender: false }, at);
+    tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.5, immediateRender: false }, at);
+    tl.to(el, { opacity: 0, duration: 0.5 }, at + 1.4);
   });
 
   // …and the sharper ones pop up in speech bubbles
