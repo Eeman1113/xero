@@ -2584,6 +2584,8 @@ html.lenis body {
 .rm .stage {
   height: auto;
   overflow: visible;
+  /* the copy vignettes reach past the edge: clip sideways only */
+  overflow-x: clip;
   perspective: none;
 }
 .rm .stage-inner {
@@ -2762,6 +2764,17 @@ html.lenis body {
 }
 .rm .bal-hand {
   opacity: 1;
+}
+/* the hand + slip hang above the box: leave room so they never sit on the topic words */
+.rm .orb .obj.ballot {
+  margin-top: min(36vw, 160px);
+}
+/* prints are already developed; the XERO keys keep keycap proportions */
+.rm .pol-dev {
+  display: none;
+}
+.rm .c4-xero {
+  width: min(80vw, 340px);
 }
 
 /* reduced motion (v3): kits are static, the beats become normal sections */
