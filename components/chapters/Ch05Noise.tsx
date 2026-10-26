@@ -203,7 +203,7 @@ export function buildCh05(api: SceneAPI, s: number): number {
     tl.fromTo(w, { x: 0, y: "-16vh", opacity: 0, scale: 0.55 }, { x: 0, y: "-16vh", opacity: 1, scale: 1.15, duration: 0.22, ease: "power2.out", immediateRender: false }, at);
     tl.to(w, { scale: 9, opacity: 0, duration: 0.42, ease: "power2.in" }, at + 0.22);
   };
-  dive(words[0], s + 3.12);
+  dive(words[0], s + 3.22);
 
   const sticker = one(".c5-text .headline");
   tl.fromTo(sticker, { autoAlpha: 0, scale: 0.86, rotation: -7 },
