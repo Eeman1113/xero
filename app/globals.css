@@ -2552,6 +2552,21 @@ html.lenis body {
   .tape.t1 {
     display: none;
   }
+  /* the mic arrives after the headline has gone: it takes the free top-right corner, above the long-form */
+  .c4-mic {
+    right: 9vw;
+    top: 14vh;
+    width: max(13vw, 56px);
+  }
+  .q.q1 {
+    display: none;
+  }
+  .c4-xero {
+    top: 43%;
+  }
+  .prompter.c4-prompt {
+    height: 40vh;
+  }
   /* portrait: the long-form owns the lower half, the collage the upper half */
   .c7-collage {
     width: min(86vw, 44vh);
@@ -2677,7 +2692,7 @@ html.lenis body {
 /* v3 kits + ch5 beats in the portrait layout (phones + portrait tablets) */
 @media (max-width: 767px), (max-width: 1100px) and (orientation: portrait) {
   .c2-nokia { left: auto; right: 6vw; top: 56vh; width: 17vw; }
-  .c4-mic { right: 3vw; top: 42vh; width: 15vw; }
+  .c4-mic { right: 9vw; top: 14vh; width: max(13vw, 56px); }
   .c4-xero { width: calc(4 * 13vw + 3 * 4px); }
   .veh-van { width: 34vw; }
   .veh-auto { width: 27vw; }
@@ -2706,6 +2721,8 @@ html.lenis body {
 @media (min-width: 600px) and (max-width: 1100px) and (orientation: portrait) {
   .ai-arm { left: 52vw; width: 15vw; }
   .ai-laptop { left: 6vw; top: 41vh; width: 50vw; }
+  .c4-xero { top: 42%; }
+  .prompter.c4-prompt { height: 36vh; }
   .ai-nn { width: 40vw; top: 20vh; }
   .ai-gpu { width: 34vw; }
   .ar-sheet { left: 12vw; width: 76vw; }
@@ -2827,6 +2844,13 @@ html.lenis body {
 .rm .col-item {
   opacity: 1;
 }
+/* reduced motion: the journey reads headline → van → copy → the assembled cover (no empty square first) */
+.rm .col-item .obj {
+  display: block;
+}
+.rm .ch7 .c7-text { order: -3; }
+.rm .ch7 .c7-van { order: -2; }
+.rm .ch7 .c7-prompt { order: -1; }
 .rm .c8-final {
   align-items: center;
   text-align: center;

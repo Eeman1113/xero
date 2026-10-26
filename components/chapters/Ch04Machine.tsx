@@ -105,7 +105,9 @@ export function buildCh04(api: SceneAPI, s: number): number {
   tl.fromTo(kb, { y: "26vh", rotationX: 40, scale: 0.72, transformPerspective: 900 },
     { y: small ? "4vh" : "14vh", rotationX: 6, scale: small ? 1 : 1.12, duration: 1.0, ease: "power2.out", immediateRender: false }, s);
   tl.fromTo(kb, { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, s);
-  tl.to(kb, { y: small ? "-14vh" : "8vh", x: small ? 0 : "18vw", rotationX: 2, rotationZ: -3, scale: small ? 0.8 : 1, duration: 1, ease: "sine.inOut" }, s + 1.7);
+  // portrait tablets have room to lift it higher, so the XERO row clears the long-form
+  const tablet = small && window.innerWidth >= 600;
+  tl.to(kb, { y: tablet ? "-20vh" : small ? "-16vh" : "8vh", x: small ? 0 : "18vw", rotationX: 2, rotationZ: -3, scale: small ? 0.8 : 1, duration: 1, ease: "sine.inOut" }, s + 1.7);
 
   // keycaps fly out of the keyboard toward (and past) the viewer
   const keys = q(".keycap");

@@ -119,6 +119,7 @@ export function buildCh07(api: SceneAPI, s: number): number {
   api.reveal(one(".c7-text .headline"), s + 0.02, s + 2.0);
   api.prompter(one(".c7-prompt"), s + 1.9, 2.9);
   const end = s + 5.2;
-  tl.to(one(".c7-prompt"), { opacity: 0, duration: 0.3 }, end - 0.35);
+  // the last line holds until ch8's closing line is already arriving (no empty left half)
+  tl.to(one(".c7-prompt"), { opacity: 0, duration: 0.2 }, end - 0.05);
   return end;
 }

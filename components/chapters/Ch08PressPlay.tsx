@@ -190,7 +190,7 @@ export function buildCh08(api: SceneAPI, s: number): number {
   tl.to(one(".c7-text"), { opacity: 0, duration: 0.3 }, s);
 
   // closing line reveals first and stays as the headline above the title
-  api.reveal(one(".c8-closer"), s + 0.35);
+  api.reveal(one(".c8-closer"), s + 0.12);
   tl.fromTo(one(".c8-closer"), { opacity: 1 }, { opacity: 0.75, duration: 0.4, immediateRender: false }, s + 1.5);
 
   const fin = s + 1.4;
