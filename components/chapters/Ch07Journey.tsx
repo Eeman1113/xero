@@ -96,7 +96,7 @@ export function buildCh07(api: SceneAPI, s: number): number {
   // roadside: the board is far away (slow, high, fades into the distance before
   // it reaches the headline); the sign is close (fast, low) and crosses fully
   const board = one(".c7-board");
-  tl.fromTo(board, { x: "60vw" }, { x: small ? "-30vw" : "0vw", duration: 2.2, ease: "none", immediateRender: false }, s + 0.05);
+  tl.fromTo(board, { x: small ? "48vw" : "40vw" }, { x: small ? "-30vw" : "0vw", duration: 2.0, ease: "none", immediateRender: false }, s);
   tl.to(board, { opacity: 0, duration: 0.45, ease: "power1.in" }, s + 1.85);
   const sign = one(".c7-sign");
   tl.fromTo(sign, { x: "58vw", rotation: 6 }, { x: "-80vw", rotation: -6, duration: 1.4, ease: "none", immediateRender: false }, s + 0.9);

@@ -226,7 +226,8 @@ export function buildCh06(api: SceneAPI, s: number): number {
   tl.to(cards, { x: 0, y: "-6vh", rotation: 0, scale: 1, duration: 0.42, ease: "power2.inOut" }, end - 0.72);
   tl.to(fan, { scale: 0.12, rotation: 24, duration: 0.34, ease: "power2.in" }, end - 0.32);
   tl.to(fan, { opacity: 0, duration: 0.1 }, end - 0.1);
-  tl.to(one(".c6-prompt"), { opacity: 0, duration: 0.3 }, end - 0.35);
-  api.layerOut(layer, end + 0.05, 0.03);
+  // the last line stays readable right up to the hand-off (no empty beat before ch7)
+  tl.to(one(".c6-prompt"), { opacity: 0, duration: 0.12 }, end - 0.06);
+  api.layerOut(layer, end + 0.06, 0.02);
   return end + 0.08;
 }
