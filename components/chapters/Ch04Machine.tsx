@@ -2,6 +2,7 @@ import Reveal from "../ui/Reveal";
 import Prompter from "../ui/Prompter";
 import Obj from "../ui/Obj";
 import Pic from "../ui/Pic";
+import { MicKit } from "../kits/Kits";
 import { STORY } from "@/lib/story";
 import type { ObjectName } from "@/lib/assets";
 import type { SceneAPI } from "@/lib/useScrollScene";
@@ -62,6 +63,10 @@ export function Ch04Layer() {
             <span className="xk-press"><Pic name={k} className="xk-img" /></span>
           </div>
         ))}
+        <div className="xk-space" data-press="">
+          <span className="xk-glow" aria-hidden="true" />
+          <span className="xk-press"><Pic name="keycap_space" className="xk-img" /></span>
+        </div>
       </div>
       <div className="xk-acc c4-esc desk-only" data-press="" aria-hidden="true">
         <span className="xk-press"><Pic name="keycap_esc" className="xk-img" /></span>
@@ -72,7 +77,7 @@ export function Ch04Layer() {
       </div>
       <Obj name="nokia" className="c4-nokia" depth={0.7} />
       <Obj name="coffee_mug" className="c4-mug" depth={1.1} />
-      <Obj name="microphone" className="c4-mic" depth={1.3} />
+      <MicKit className="c4-mic" depth={1.3} />
       <div className="copy-col c4-text">
         <Reveal as="h2" className="headline" text={STORY.ch4.copy} />
       </div>
@@ -165,6 +170,18 @@ export function buildCh04(api: SceneAPI, s: number): number {
     tl.to(glow, { opacity: 0, scale: 1.5, duration: 0.45, ease: "power1.out" }, land + 0.08);
   });
 
+  // the space bar SLAMS down under the word like a rubber stamp; the letters jump
+  const space = one(".xk-space");
+  const slam = s + 2.15 + 4 * 0.16 + 0.12;
+  tl.fromTo(space, { y: "-30vh", scale: 2.4, rotation: -6, opacity: 0 },
+    { y: 0, scale: 1, rotation: 0, opacity: 1, duration: 0.22, ease: "power4.in", immediateRender: false }, slam - 0.22);
+  tl.fromTo(space.querySelector(".xk-img"), { scaleY: 1 }, { scaleY: 0.72, scaleX: 1.04, transformOrigin: "50% 100%", duration: 0.04, immediateRender: false }, slam);
+  tl.to(space.querySelector(".xk-img"), { scaleY: 1, scaleX: 1, duration: 0.3, ease: "elastic.out(1, 0.3)" }, slam + 0.04);
+  tl.fromTo(space.querySelector(".xk-glow"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1.3, duration: 0.05, immediateRender: false }, slam);
+  tl.to(space.querySelector(".xk-glow"), { opacity: 0, scale: 1.7, duration: 0.4 }, slam + 0.05);
+  tl.to(xks, { y: -14, duration: 0.07, ease: "power2.out", stagger: 0.015 }, slam + 0.01);
+  tl.to(xks, { y: 0, duration: 0.25, ease: "bounce.out", stagger: 0.015 }, slam + 0.09);
+
   // ESC + ENTER: playful floating accents (desktop)
   if (!small) {
     const esc = one(".c4-esc");
@@ -191,7 +208,7 @@ export function buildCh04(api: SceneAPI, s: number): number {
 
   const end = pAt + 3.1;
   tl.to([kb, mic], { scale: 2.6, y: "40vh", opacity: 0, duration: 0.6, ease: "power2.in" }, end - 0.5);
-  tl.to(xks, { y: "-60vh", rotation: (i: number) => (i % 2 ? 30 : -30), opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.in" }, end - 0.65);
+  tl.to([...xks, space], { y: "-60vh", rotation: (i: number) => (i % 2 ? 30 : -30), opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.in" }, end - 0.65);
   tl.to(q(".xk-acc"), { scale: 0.4, opacity: 0, duration: 0.35, ease: "power2.in" }, end - 0.6);
   tl.to(one(".c4-prompt"), { opacity: 0, duration: 0.3 }, end - 0.4);
   api.layerOut(layer, end + 0.15, 0.1);

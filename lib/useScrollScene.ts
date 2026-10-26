@@ -7,14 +7,16 @@ import { revealIn, revealOut } from "./reveal";
 import { REDUCED_QUERY, SMALL_QUERY } from "./motion";
 
 function snapshotField() {
-  const { bends, follower, ...rest } = field;
-  return { rest: { ...rest }, bends: bends.map((b) => ({ ...b })), t: follower.t, on: follower.on };
+  const { bends, follower, follower2, ...rest } = field;
+  return { rest: { ...rest }, bends: bends.map((b) => ({ ...b })), t: follower.t, on: follower.on, t2: follower2.t, on2: follower2.on };
 }
 function restoreField(s: ReturnType<typeof snapshotField>) {
   Object.assign(field, s.rest);
   s.bends.forEach((b, i) => Object.assign(field.bends[i], b));
   field.follower.t = s.t;
   field.follower.on = s.on;
+  field.follower2.t = s.t2;
+  field.follower2.on = s.on2;
 }
 
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -42,6 +44,8 @@ export type SceneAPI = {
   /** layer visibility helpers */
   layerIn: (el: Element, at: number, duration?: number) => void;
   layerOut: (el: Element, at: number, duration?: number) => void;
+  /** run when the scene is torn down (matchMedia change / unmount) */
+  cleanup: (fn: () => void) => void;
 };
 
 export type SceneOptions = {
@@ -95,6 +99,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
 
         const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
         const cues: Cue[] = [];
+        const cleanups: (() => void)[] = [];
         const chapters: { id: string; time: number }[] = [];
         let preset: PresetName = opts.startPreset;
         const fieldPreset: FieldPreset = { ...PRESETS[opts.startPreset] };
@@ -159,6 +164,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
           layerOut: (el, at, duration = 0.3) => {
             tl.to(el, { autoAlpha: 0, duration }, at);
           },
+          cleanup: (fn) => cleanups.push(fn),
         };
 
         // CSS `translate: -50% -50%` centring: GSAP folds the individual
@@ -266,7 +272,18 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
           },
         });
 
+        // looping (idle) animations inside this scene only run while it is near the screen
+        const live = ScrollTrigger.create({
+          trigger: root,
+          start: "top bottom",
+          end: "bottom top",
+          onToggle: (self) => root.classList.toggle("is-live", self.isActive),
+        });
+        root.classList.toggle("is-live", live.isActive);
+
         return () => {
+          cleanups.forEach((f) => f());
+          live.kill();
           unreg();
           unregField();
           st.kill();

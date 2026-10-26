@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { animate } from "animejs";
 import { PLAY_EVENT } from "../chapters/Ch08PressPlay";
-import { setPlaying as signalPlaying } from "@/lib/playing";
+import { setPlaying as signalPlaying, setLevel } from "@/lib/playing";
 
 const STOP_OTHERS = "xero:stop-others";
 const R = 26;
@@ -60,7 +60,13 @@ export default function AudioPlayer({ id, src, title, latest = false }: { id: st
     g.clearRect(0, 0, w, h);
     const bars = 28;
     const data = new Uint8Array(32);
-    if (analyser.current) analyser.current.getByteFrequencyData(data);
+    if (analyser.current) {
+      analyser.current.getByteFrequencyData(data);
+      // feed the mic kit's pop filter (ch8) with the real loudness
+      let sum = 0;
+      for (let k = 1; k < 20; k++) sum += data[k];
+      setLevel(a.paused ? 0 : Math.min(1, sum / (19 * 255) * 1.6));
+    }
     const grad = g.createLinearGradient(0, 0, w, 0);
     ["#ff2a8c", "#ff9628", "#f0dc1e", "#28f03c", "#28e6f0"].forEach((c, i) => grad.addColorStop(i / 4, c));
     g.fillStyle = grad;
@@ -116,6 +122,7 @@ export default function AudioPlayer({ id, src, title, latest = false }: { id: st
     const onPause = () => {
       setPlaying(false);
       signalPlaying(false);
+      setLevel(0);
       draw();
     };
     const onStopOthers = (e: Event) => {

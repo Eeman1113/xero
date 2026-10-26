@@ -153,14 +153,10 @@ export default function ContourField() {
     };
 
     const meta = { a: 1, w: 1 };
-    const van = {
-      el: null as HTMLElement | null,
-      wheels: [] as HTMLElement[],
-      bob: null as HTMLElement | null,
-      lastX: NaN,
-      prevX: undefined as number | undefined,
-      dist: 0,
-    };
+    type Rider = { el: HTMLElement | null; wheels: HTMLElement[]; bob: HTMLElement | null; lastX: number; dist: number; anchor: number; shake: number };
+    const mkRider = (shake: number): Rider => ({ el: null, wheels: [], bob: null, lastX: NaN, dist: 0, anchor: 1, shake });
+    const van = mkRider(23);
+    const auto = mkRider(31);
     let last = 0;
     let t = 0;
 
@@ -221,41 +217,45 @@ export default function ContourField() {
       }
       ctx.globalAlpha = 1;
 
-      // the follower (van kit) rides the highlighted line
-      const fol = f.follower;
-      if (fol.el && !reduced) {
-        if (fol.el !== van.el) {
-          van.el = fol.el;
-          van.wheels = Array.from(fol.el.querySelectorAll<HTMLElement>(".van-wheel"));
-          van.bob = fol.el.querySelector<HTMLElement>(".van-bob");
-          van.lastX = NaN;
+      // the riders (van + auto kits) follow contour lines; wheels roll by distance
+      const ride = (fol: { el: HTMLElement | null; t: number; on: number }, v: Rider, line: number) => {
+        if (!fol.el) return;
+        if (fol.el !== v.el) {
+          v.el = fol.el;
+          v.wheels = Array.from(fol.el.querySelectorAll<HTMLElement>(".veh-wheel"));
+          v.bob = fol.el.querySelector<HTMLElement>(".veh-bob");
+          v.anchor = Number(fol.el.dataset.anchor) || 1;
+          v.lastX = NaN;
         }
         if (fol.on > 0.01) {
-          const x = -W * 0.08 + fol.t * W * 1.16;
-          const y = lineY(hl, x, t, ph, meta);
-          const y2 = lineY(hl, x + 12, t, ph, meta);
+          const x = -W * 0.1 + fol.t * W * 1.2;
+          const y = lineY(line, x, t, ph, meta);
+          const y2 = lineY(line, x + 12, t, ph, meta);
           const ang = Math.atan2(y2 - y, 12);
           fol.el.style.opacity = String(fol.on);
-          // anchor = bottom of the wheels (≈119% of the body box), sunk a hair into the line
-          fol.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -116%) rotate(${ang.toFixed(3)}rad)`;
+          fol.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -${(v.anchor * 100).toFixed(1)}%) rotate(${ang.toFixed(3)}rad)`;
           // wheels roll exactly with the distance travelled: θ = d / (π·D) · 360°
-          if (!Number.isNaN(van.lastX)) van.dist += x - van.lastX;
-          van.lastX = x;
-          const D = Math.max(1, (van.wheels[0]?.offsetWidth ?? 40));
-          const deg = (van.dist / (Math.PI * D)) * 360;
-          for (const w of van.wheels) w.style.transform = `rotate(${deg.toFixed(1)}deg)`;
-          // a little suspension: road bumps scale with speed, plus idle engine shake
-          if (van.bob) {
-            const speed = Math.min(1, Math.abs(x - (van.prevX ?? x)) / 6);
-            van.prevX = x;
-            const bump = Math.sin(van.dist * 0.06) * 1.6 * (0.3 + speed) + Math.sin(t * 23) * 0.35;
-            const pitch = Math.sin(van.dist * 0.035 + 1.3) * 0.6 * (0.3 + speed);
-            van.bob.style.transform = `translateY(${bump.toFixed(2)}px) rotate(${pitch.toFixed(2)}deg)`;
+          const dx = Number.isNaN(v.lastX) ? 0 : x - v.lastX;
+          v.dist += dx;
+          v.lastX = x;
+          const D = Math.max(1, v.wheels[0]?.offsetWidth ?? 40);
+          const deg = (v.dist / (Math.PI * D)) * 360;
+          for (const w of v.wheels) w.style.transform = `rotate(${deg.toFixed(1)}deg)`;
+          // suspension: bumps scale with speed, plus idle engine shake
+          if (v.bob) {
+            const speed = Math.min(1, Math.abs(dx) / 6);
+            const bump = Math.sin(v.dist * 0.06) * 1.6 * (0.3 + speed) + Math.sin(t * v.shake) * 0.4;
+            const pitch = Math.sin(v.dist * 0.035 + 1.3) * 0.7 * (0.3 + speed);
+            v.bob.style.transform = `translateY(${bump.toFixed(2)}px) rotate(${pitch.toFixed(2)}deg)`;
           }
         } else if (fol.el.style.opacity !== "0") {
           fol.el.style.opacity = "0";
-          van.lastX = NaN;
+          v.lastX = NaN;
         }
+      };
+      if (!reduced) {
+        ride(f.follower, van, hl);
+        ride(f.follower2, auto, Math.max(0, Math.min(N - 1, hl + f.follower2.dl)));
       }
     };
 

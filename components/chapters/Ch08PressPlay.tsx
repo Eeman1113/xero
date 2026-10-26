@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { animate, stagger } from "animejs";
 import Reveal from "../ui/Reveal";
 import Obj from "../ui/Obj";
+import { MicKit } from "../kits/Kits";
 import { STORY } from "@/lib/story";
 import type { SceneAPI } from "@/lib/useScrollScene";
 import { scrollToTarget } from "@/lib/lenis";
@@ -84,7 +85,7 @@ export function Ch08Layer() {
         <span className="mono c8-hint">PRESS PLAY · LATEST EPISODE</span>
       </div>
       <Obj name="headphones" className="c8-phones" depth={0.8} />
-      <Obj name="microphone" className="c8-mic" depth={1.2} />
+      <MicKit className="c8-mic" depth={1.2} />
     </div>
   );
 }
@@ -97,7 +98,7 @@ export function buildCh08(api: SceneAPI, s: number): number {
   api.fieldTo("play", s, 1.8, "power2.inOut");
 
   // the collage settles behind the title
-  tl.to(one(".c7-collage"), { scale: small ? 0.6 : 0.5, x: 0, y: 0, opacity: 0.16, duration: 1.4, ease: "power2.inOut" }, s);
+  tl.to(one(".c7-collage"), { scale: small ? 0.6 : 0.5, x: 0, y: 0, opacity: 0, duration: 1.2, ease: "power2.inOut" }, s);
   tl.to(one(".c7-text"), { opacity: 0, duration: 0.3 }, s);
 
   // closing line reveals first and stays as the headline above the title
@@ -110,7 +111,7 @@ export function buildCh08(api: SceneAPI, s: number): number {
   api.reveal(one(".c8-copy"), fin + 0.45);
   tl.fromTo(one(".bigplay"), { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)", immediateRender: false }, fin + 0.6);
   tl.fromTo(one(".c8-hint"), { opacity: 0 }, { opacity: 0.7, duration: 0.3, immediateRender: false }, fin + 0.9);
-  tl.fromTo(q(".c8-phones, .c8-mic"), { y: "40vh", opacity: 0 }, { y: 0, opacity: 0.85, duration: 0.8, stagger: 0.1, ease: "power2.out", immediateRender: false }, fin + 0.4);
+  tl.fromTo(q(".c8-phones, .c8-mic"), { y: "40vh", opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power2.out", immediateRender: false }, fin + 0.4);
   // hold the final frame for a beat
   tl.to({}, { duration: 1 }, fin + 1.2);
   return fin + 2;

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { animate, stagger } from "animejs";
 import AudioPlayer from "./AudioPlayer";
-import Cassette from "../ui/Cassette";
+import { CassetteKit as Cassette } from "../kits/Kits";
 import { setPlaying as signalPlaying } from "@/lib/playing";
 import Reveal from "../ui/Reveal";
 import { EPISODES, IMAGES } from "@/lib/assets";

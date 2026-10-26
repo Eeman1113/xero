@@ -80,7 +80,7 @@ export default function Experience({ feed }: { feed: SiteFeed }) {
     const busy = new WeakSet<Element>();
     // keycap kit pieces get a "press" instead of a jiggle
     const press = (key: Element) => {
-      const img = key.querySelector(".xk-press");
+      const img = key.querySelector(".xk-press, .press");
       if (!img || busy.has(img)) return;
       busy.add(img);
       animate(img, {
@@ -99,7 +99,9 @@ export default function Experience({ feed }: { feed: SiteFeed }) {
     const onOver = (e: PointerEvent) => {
       const key = (e.target as HTMLElement | null)?.closest?.("[data-press]");
       if (key) return press(key);
-      const img = (e.target as HTMLElement | null)?.closest?.(".obj")?.querySelector(".obj-img");
+      // kits jiggle as a whole (.kit-j), single objects jiggle their image
+      const o = (e.target as HTMLElement | null)?.closest?.(".obj");
+      const img = o?.querySelector(":scope > .obj-m > .kit-j") ?? o?.querySelector(".obj-img");
       if (!img || busy.has(img)) return;
       busy.add(img);
       animate(img, {

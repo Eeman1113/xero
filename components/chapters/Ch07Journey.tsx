@@ -3,39 +3,42 @@ import { useEffect, useRef } from "react";
 import Reveal from "../ui/Reveal";
 import Prompter from "../ui/Prompter";
 import Obj from "../ui/Obj";
-import Pic from "../ui/Pic";
+import { Vehicle } from "../kits/Kits";
 import { STORY } from "@/lib/story";
 import type { ObjectName } from "@/lib/assets";
 import type { SceneAPI } from "@/lib/useScrollScene";
 import { field } from "@/lib/field";
 
-/** positions sampled from the cover art (centre x/y + width, as fractions of the square) */
+/** the cover, re-collaged from the v3 cut-outs (centre x/y + width as fractions of the square) */
 export const COLLAGE: { name: ObjectName; x: number; y: number; w: number; r?: number }[] = [
-  { name: "alien_eye", x: 0.69, y: 0.2, w: 0.27 },
-  { name: "marker", x: 0.54, y: 0.19, w: 0.045, r: 8 },
-  { name: "airplane", x: 0.22, y: 0.28, w: 0.31 },
-  { name: "mythbusters", x: 0.51, y: 0.29, w: 0.2 },
-  { name: "banana", x: 0.49, y: 0.38, w: 0.15 },
-  { name: "tablet", x: 0.25, y: 0.39, w: 0.12 },
-  { name: "club", x: 0.36, y: 0.39, w: 0.04 },
-  { name: "apple", x: 0.385, y: 0.435, w: 0.035 },
-  { name: "farcry", x: 0.3, y: 0.5, w: 0.09 },
-  { name: "keyboard", x: 0.44, y: 0.51, w: 0.22 },
-  { name: "camera", x: 0.5, y: 0.6, w: 0.13 },
-  { name: "coconut_oil", x: 0.34, y: 0.64, w: 0.1 },
-  { name: "nokia", x: 0.61, y: 0.6, w: 0.08 },
-  { name: "splatter", x: 0.7, y: 0.61, w: 0.11 },
-  { name: "knife", x: 0.26, y: 0.73, w: 0.2 },
-  { name: "cards", x: 0.64, y: 0.73, w: 0.21 },
+  { name: "airplane", x: 0.27, y: 0.17, w: 0.36, r: -8 },
+  { name: "robot_head", x: 0.72, y: 0.2, w: 0.15, r: 6 },
+  { name: "glass_tower", x: 0.88, y: 0.3, w: 0.16 },
+  { name: "cassette_body", x: 0.52, y: 0.31, w: 0.22, r: -6 },
+  { name: "polaroid_2", x: 0.17, y: 0.42, w: 0.15, r: -10 },
+  { name: "banana", x: 0.78, y: 0.47, w: 0.14, r: 14 },
+  { name: "keyboard", x: 0.48, y: 0.5, w: 0.36, r: 4 },
+  { name: "nokia", x: 0.12, y: 0.66, w: 0.08, r: -12 },
+  { name: "camera_body", x: 0.33, y: 0.68, w: 0.2, r: -4 },
+  { name: "coconut_oil", x: 0.53, y: 0.7, w: 0.06, r: 8 },
+  { name: "controller", x: 0.72, y: 0.69, w: 0.21, r: -8 },
+  { name: "card_1", x: 0.9, y: 0.66, w: 0.09, r: 12 },
+  { name: "chai", x: 0.2, y: 0.86, w: 0.07 },
+  { name: "vada_pav", x: 0.4, y: 0.87, w: 0.13 },
+  { name: "headphones", x: 0.6, y: 0.88, w: 0.12, r: -10 },
+  { name: "coffee_mug", x: 0.8, y: 0.87, w: 0.1 },
 ];
 
 /** 07 — THE JOURNEY: the van rides a neon line; the camera pulls back and the cover assembles. */
 export function Ch07Layer() {
   const vanRef = useRef<HTMLDivElement>(null);
+  const autoRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     field.follower.el = vanRef.current;
+    field.follower2.el = autoRef.current;
     return () => {
       field.follower.el = null;
+      field.follower2.el = null;
     };
   }, []);
   return (
@@ -48,15 +51,11 @@ export function Ch07Layer() {
           </div>
         ))}
       </div>
-      <div ref={vanRef} className="c7-van" aria-hidden="true">
-        {/* van kit: wheels sit BEHIND the body in its empty arches; ContourField
-            spins them by distance travelled and bobs the body on its suspension */}
-        <Pic name="van_wheel" className="van-wheel w-rear" />
-        <Pic name="van_wheel" className="van-wheel w-front" />
-        <div className="van-bob">
-          <Pic name="van_body" className="van-body" />
-        </div>
-      </div>
+      {/* van + auto kits: wheels behind the bodies in their empty arches; ContourField
+          rides them along contour lines, spins the wheels by distance and bobs the bodies */}
+      <Vehicle ref={autoRef} kind="auto" className="c7-auto" />
+      <Vehicle ref={vanRef} kind="van" className="c7-van" />
+      <Obj name="highway_board" className="c7-board" depth={0.7} />
       <Obj name="road_sign" className="c7-sign" depth={1.3} />
       <div className="copy-col c7-text">
         <Reveal as="h2" className="headline" text={STORY.ch7.copy} />
@@ -77,12 +76,18 @@ export function buildCh07(api: SceneAPI, s: number): number {
   const fol = field.follower;
   tl.fromTo(fol, { on: 0, t: -0.02 }, { on: 1, t: 0.15, duration: 0.4, immediateRender: false }, s + 0.2);
   tl.to(fol, { t: 1.02, duration: 3.6, ease: "sine.inOut" }, s + 0.6);
+  // the auto: starts behind on a nearer line and overtakes (Mumbai rules)
+  const f2 = field.follower2;
+  tl.fromTo(f2, { on: 0, t: -0.12 }, { on: 1, t: 0.0, duration: 0.3, immediateRender: false }, s + 0.5);
+  tl.to(f2, { t: 1.12, duration: 2.1, ease: "power1.in" }, s + 0.8);
+  tl.to(f2, { on: 0, duration: 0.2 }, s + 2.9);
 
-  // road sign slides in from the right as the van approaches it, then drifts off as the camera pulls back
+  // roadside: the board passes far away (slow), the sign passes close (fast) — parallax
+  const board = one(".c7-board");
+  tl.fromTo(board, { x: "70vw" }, { x: "-80vw", duration: 3.6, ease: "none", immediateRender: false }, s + 0.4);
   const sign = one(".c7-sign");
-  tl.fromTo(sign, { x: "45vw", rotation: 8, opacity: 0 }, { x: 0, rotation: -2, opacity: 1, duration: 1, ease: "power3.out", immediateRender: false }, s + 1.5);
-  tl.to(sign, { x: "-6vw", y: "-3vh", duration: 1.2 }, s + 2.5);
-  tl.to(sign, { x: "40vw", opacity: 0, rotation: 10, duration: 0.6, ease: "power2.in" }, s + 3.8);
+  tl.fromTo(sign, { x: "60vw", rotation: 6 }, { x: "-30vw", rotation: -3, duration: 2.0, ease: "none", immediateRender: false }, s + 1.4);
+  tl.to(sign, { x: "-110vw", rotation: -8, duration: 0.8, ease: "power1.in" }, s + 3.4);
   tl.to(fol, { on: 0, duration: 0.3 }, s + 4.0);
 
   // the collage assembles: objects come in from far away, then the camera pulls back

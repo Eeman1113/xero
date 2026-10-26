@@ -36,6 +36,10 @@ export const PRESETS = {
   takeoff: { amp: 0.6, freq: 1, swirl: 0.35, spread: 1, depth: 1, ripple: 0, converge: 0, reveal: 1, opacity: 0.95, tilt: 0, highlightAmt: 0 },
   machine: { amp: 0.75, freq: 1.7, swirl: 0.5, spread: 1.15, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 0.6, tilt: -0.3, highlightAmt: 0 },
   noise: { amp: 1.35, freq: 1.35, swirl: 1.2, spread: 1.1, depth: 0, ripple: 1, converge: 0, reveal: 1, opacity: 0.85, tilt: 0.05, highlightAmt: 0 },
+  /** AI lab: calm, low, slightly tilted so the machines read */
+  lab: { amp: 0.45, freq: 1.9, swirl: 0.3, spread: 1.3, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 0.42, tilt: -0.15, highlightAmt: 0 },
+  /** architect's table: near-flat drafting lines */
+  drafting: { amp: 0.18, freq: 0.6, swirl: 0.15, spread: 1.5, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 0.38, tilt: 0, highlightAmt: 0 },
   wildcard: { amp: 0.7, freq: 0.9, swirl: 0.8, spread: 1.2, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 0.55, tilt: 0.2, highlightAmt: 0 },
   journey: { amp: 0.85, freq: 0.9, swirl: 0.9, spread: 1.25, depth: 0, ripple: 0, converge: 0, reveal: 1, opacity: 1, tilt: -0.1, highlightAmt: 1 },
   play: { amp: 0.55, freq: 1, swirl: 0.5, spread: 1.1, depth: 0, ripple: 0, converge: 1, reveal: 1, opacity: 1, tilt: 0, highlightAmt: 0 },
@@ -60,6 +64,8 @@ export const field = {
   ] as Bend[],
   /** an element (the van) that rides the highlighted line. t: 0 left .. 1 right */
   follower: { el: null as HTMLElement | null, t: 0, on: 0 },
+  /** a second rider (the auto-rickshaw) on another line: dl = line offset from the highlight */
+  follower2: { el: null as HTMLElement | null, t: 0, on: 0, dl: 5 },
 };
 
 export type FieldState = typeof field;

@@ -56,7 +56,6 @@ export function Ch06Layer() {
   };
   return (
     <div className="layer ch6" data-ch="06">
-      <Obj name="club" className="c6-club" depth={0.6} />
       <div className="copy-col c6-text">
         <Reveal as="h2" className="headline" text={STORY.ch6.copy} />
       </div>
@@ -132,8 +131,6 @@ export function buildCh06(api: SceneAPI, s: number): number {
     // each card flips (anime.js) when the scroll reaches it — and flips back if you scroll up
     api.cue(s + 2.0 + i * 0.4, () => flipCard(c, true), () => flipCard(c, false));
   });
-  tl.fromTo(one(".c6-club"), { y: "30vh", rotation: -40, opacity: 0 }, { y: "-22vh", rotation: 60, opacity: 0.8, duration: 4.6, immediateRender: false }, s);
-  tl.to(one(".c6-club"), { opacity: 0, duration: 0.4 }, s + 4.6);
 
   api.reveal(one(".c6-text .headline"), s + 0.3, s + 2.4);
   tl.to(fan, { y: small ? "-8vh" : "-10vh", scale: small ? 0.85 : 0.82, duration: 0.6, ease: "sine.inOut" }, s + 2.4);
