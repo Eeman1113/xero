@@ -122,22 +122,26 @@ export default function ContourField() {
         const dist = Math.sqrt(dx * dx + dy * dy);
         d += f.ripple * H * 0.04 * Math.sin(dist * 0.032 - t * 4.2) * Math.exp(-dist / (minWH * 0.55));
       }
+      // bends + mouse part the lines around a point. The push is a smooth odd
+      // function of the vertical offset (tanh, not a sign flip) so a line that
+      // passes through the centre bends instead of jumping; d/d(dy) stays > -1,
+      // so lines never cross and never kink, at any strength.
       for (let b = 0; b < 3; b++) {
         const bd = f.bends[b];
         if (bd.s < 0.001) continue;
         const r = bd.r * minWH;
         const dx = x - bd.x * W;
+        if (dx * dx > r * r * 9) continue;
         const dy = yy - bd.y * H;
-        const dist2 = dx * dx + dy * dy;
-        if (dist2 > r * r * 9) continue;
-        const sgn = dy >= 0 ? 1 : -1;
-        d += sgn * bd.s * r * 0.9 * Math.exp(-dist2 / (r * r));
+        const gx = Math.exp(-(dx * dx) / (r * r));
+        const gy = Math.exp(-(dy * dy) / (r * r * 4));
+        d += bd.s * r * 0.9 * Math.tanh(dy / (r * 0.35)) * gx * gy;
       }
       if (mouse.on > 0.01) {
         const dx = x - mouse.x * W;
         const dy = yy - mouse.y * H;
         const dist2 = dx * dx + dy * dy;
-        d += (dy >= 0 ? 1 : -1) * mouse.on * 34 * Math.exp(-dist2 / (150 * 150));
+        d += mouse.on * 34 * Math.tanh(dy / 60) * Math.exp(-dist2 / (150 * 150));
       }
       y += d;
 
