@@ -5,7 +5,7 @@
  * hardcodes pixel dimensions: objects are sized with CSS (width + auto height).
  */
 
-/** GitHub Pages serves the site under /xero — every public path gets this prefix. */
+/** Optional sub-path prefix for every public path (empty on xeropodcast.online). */
 export const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export type ObjectName =

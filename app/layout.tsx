@@ -11,7 +11,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", displ
 const hand = Caveat({ weight: ["600"], subsets: ["latin"], variable: "--font-hand", display: "swap", preload: false });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://eeman1113.github.io/xero/"),
+  metadataBase: new URL("https://xeropodcast.online/"),
   title: "XERO — A Life in Progress · Season 2",
   description: "Two friends. Too many thoughts. One microphone. A Hinglish podcast by two best friends — Season 2 is live.",
   applicationName: "XERO",

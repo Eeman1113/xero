@@ -84,8 +84,8 @@ All objects are sized by CSS width with auto height. You can swap any PNG for a 
 - Titles containing `S2E3`-style tags get an `S2 · E3` badge; the tag is stripped from the display title. Newest 6 uploads are shown; each card plays inline (youtube-nocookie) or opens YouTube.
 - Spotify has no public RSS for a show link, so the Listen section embeds the official show player (`open.spotify.com/embed/show/2wdDWjS9Vyjejc6kXJt7Vv`), which always lists the newest episodes.
 - If YouTube is unreachable, the section falls back to the bundled S2E1/S2E2 preview players.
-- Hosted on **GitHub Pages** (static export): https://eeman1113.github.io/xero/ . The feed is read at build time and `.github/workflows/deploy.yml` rebuilds + redeploys **every hour** (and on every push to `main`), so new YouTube uploads appear automatically. Run it manually from the repo's Actions tab → "Deploy to GitHub Pages" → Run workflow.
+- Hosted on **GitHub Pages** (static export): https://xeropodcast.online (custom domain via `public/CNAME`; DNS at Hostinger → GitHub Pages A/AAAA records, `www` CNAME → eeman1113.github.io). The feed is read at build time and `.github/workflows/deploy.yml` rebuilds + redeploys **every hour** (and on every push to `main`), so new YouTube uploads appear automatically. Run it manually from the repo's Actions tab → "Deploy to GitHub Pages" → Run workflow.
 - Note: GitHub pauses scheduled workflows after 60 days with no repo activity — any push (or re-enabling the workflow) resumes them.
 
 ## Local dev
-`npm run dev` → http://localhost:3000 (no base path). Production build like CI: `NEXT_PUBLIC_BASE_PATH=/xero npm run build` → `out/`.
+`npm run dev` → http://localhost:3000 (no base path). Production build like CI: `npm run build` → `out/`.
