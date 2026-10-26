@@ -926,22 +926,23 @@ html.lenis body {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* above the orbit (and the beats, for the dive), below the headline sticker */
+  z-index: 22;
 }
+/* ONE topic at a time: a carousel through the same slot under the headline */
 .topic {
   position: absolute;
   left: 50%;
+  top: 66%;
   translate: -50% -50%;
   white-space: nowrap;
-  font-size: clamp(3.6rem, 13vw, 14rem);
-  color: transparent;
-  -webkit-text-stroke: 2px var(--c);
+  font-size: clamp(3.2rem, min(12vw, 21vh), 13rem);
+  line-height: 0.9;
+  color: var(--c);
+  text-shadow: 0 0 40px rgba(0, 0, 0, 0.85), 0 0 12px rgba(0, 0, 0, 0.6);
   opacity: 0;
+  will-change: transform, opacity;
 }
-.topic.tw0 { top: 22%; }
-.topic.tw1 { top: 40%; color: var(--c); -webkit-text-stroke: 0; mix-blend-mode: difference; }
-.topic.tw2 { top: 56%; font-size: clamp(2.8rem, 10vw, 11rem); }
-.topic.tw3 { top: 72%; color: var(--c); -webkit-text-stroke: 0; mix-blend-mode: difference; }
-.topic.tw4 { top: 86%; }
 .c5-orbits {
   position: absolute;
   inset: 0;
@@ -966,6 +967,19 @@ html.lenis body {
 }
 .orb-item.hero .obj-img {
   filter: var(--cut);
+}
+/* depth hierarchy: the orbit recedes (small, dim, soft) until its topic is on stage */
+.motion .c5-orbits .orb-item {
+  opacity: 0.3;
+  filter: blur(1.6px) saturate(0.7);
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+.motion .c5-orbits .orb.is-hot {
+  z-index: 21 !important;
+}
+.motion .c5-orbits .orb.is-hot .orb-item {
+  opacity: 1;
+  filter: none;
 }
 /* ballot kit: the hand + slip are clipped at the slot line, so the slip vanishes INTO the box */
 .ballot .obj-m {
@@ -1229,13 +1243,68 @@ html.lenis body {
   cursor: pointer;
   pointer-events: auto;
 }
-.bp-ring {
+/* radial waveform ring (drawn every frame from the audio level) */
+.bp-wave {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
-  opacity: 0;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  overflow: visible;
+  pointer-events: none;
 }
+.bp-wave path {
+  fill: none;
+  stroke: url(#bp-wave-grad);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+/* Eeman's world × play × Viju's world */
+.c8-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3.5vw, 64px);
+  width: 100%;
+}
+.c8-x {
+  flex: none;
+  pointer-events: none;
+}
+.c8-world {
+  position: relative;
+  flex: none;
+  width: clamp(104px, min(15vw, 26vh), 240px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.c8-desk {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.55;
+}
+.c8-piece {
+  position: absolute;
+  translate: -50% -50%;
+}
+/* the resting tilt lives on the image: GSAP owns the piece's transform */
+.c8-piece-img {
+  rotate: var(--r);
+  width: 100%;
+  height: auto;
+  filter: var(--cut);
+}
+.c8-sig {
+  margin-top: 0.1em;
+  font-family: var(--font-hand), cursive;
+  font-weight: 600;
+  font-size: clamp(1.3rem, min(2.4vw, 4vh), 2.4rem);
+  line-height: 1;
+  color: var(--ink);
+  rotate: -4deg;
+}
+.c8-world-l .c8-sig { color: #ff6fb1; }
+.c8-world-r .c8-sig { color: #6ff0f6; }
 .bp-core {
   position: absolute;
   inset: 0;
@@ -1255,7 +1324,6 @@ html.lenis body {
   outline: 2px solid var(--cyan);
   outline-offset: 8px;
 }
-.c8-phones { left: 8vw; bottom: 12vh; width: clamp(90px, 11vw, 190px); }
 
 /* ---------- LISTEN ---------- */
 .listen {
@@ -2427,9 +2495,15 @@ html.lenis body {
   .c7-sign {
     display: none;
   }
-  .c8-phones,
   .c8-mic {
     display: none;
+  }
+  .topic {
+    font-size: 17vw;
+    top: 64%;
+  }
+  .c8-world {
+    width: 27vw;
   }
   .listen {
     padding-top: 16vh;

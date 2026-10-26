@@ -166,31 +166,44 @@ export function buildCh05(api: SceneAPI, s: number): number {
     tl.to(arm, { x: "140vmax", duration: 0.8, ease: "power2.in" }, s + dur - 0.1 + (i % 4) * 0.04);
   });
 
-  // GOVERNMENT: the hand comes down, the slip slides into the slot (clipped), the box bounces
+  /* the topics are a carousel through ONE slot: the active word arrives from the
+     right, its object(s) come forward out of the dim orbit, then both hand over
+     to the next. Nothing else competes with it. */
+  const SLOT = 0.56;
+  const t0 = s + 0.3;
+  const words = q(".topic");
+  words.forEach((w, i) => {
+    const at = t0 + i * SLOT;
+    tl.fromTo(w, { x: "30vw", y: 0, opacity: 0, scale: 0.86 }, { x: 0, opacity: 1, scale: 1, duration: 0.22, ease: "power3.out", immediateRender: false }, at);
+    tl.to(w, { x: "-30vw", opacity: 0, scale: 0.92, duration: 0.2, ease: "power2.in" }, at + SLOT - 0.1);
+    const orbs = q(`.orb[data-topic="${i}"]`);
+    if (!orbs.length) return;
+    const hot = (on: boolean) => orbs.forEach((o) => o.classList.toggle("is-hot", on));
+    api.cue(at, () => hot(true), () => hot(false));
+    api.cue(at + SLOT, () => hot(false), () => hot(true));
+    const heroes = orbs.map((o) => o.querySelector<HTMLElement>(".orb-item")!);
+    tl.fromTo(heroes, { "--hs": 1 }, { "--hs": i === 4 ? 1.35 : 1.85, duration: 0.25, ease: "back.out(2)", immediateRender: false }, at);
+    tl.to(heroes, { "--hs": 1, duration: 0.2, ease: "power1.inOut" }, at + SLOT - 0.08);
+  });
+
+  // GOVERNMENT: while its word is on stage the hand drops a slip into the box, which bounces
   const hand = first(q, ".bal-hand");
   const box = first(q, ".bal-box");
   if (hand && box) {
-    const g = s + 0.9;
-    tl.fromTo(hand, { yPercent: -150, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.35, ease: "power2.out", immediateRender: false }, g);
-    tl.to(hand, { yPercent: 46, duration: 0.32, ease: "power1.in" }, g + 0.42);
-    tl.fromTo(box, { scaleY: 1, scaleX: 1 }, { scaleY: 0.92, scaleX: 1.04, transformOrigin: "50% 100%", duration: 0.06, immediateRender: false }, g + 0.74);
-    tl.to(box, { scaleY: 1, scaleX: 1, duration: 0.35, ease: "elastic.out(1, 0.35)" }, g + 0.8);
-    tl.to(hand, { yPercent: -160, opacity: 0, duration: 0.4, ease: "power2.in" }, g + 0.9);
+    const g = t0 + SLOT + 0.04;
+    tl.fromTo(hand, { yPercent: -150, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.16, ease: "power2.out", immediateRender: false }, g);
+    tl.to(hand, { yPercent: 46, duration: 0.14, ease: "power1.in" }, g + 0.18);
+    tl.fromTo(box, { scaleY: 1, scaleX: 1 }, { scaleY: 0.92, scaleX: 1.04, transformOrigin: "50% 100%", duration: 0.04, immediateRender: false }, g + 0.32);
+    tl.to(box, { scaleY: 1, scaleX: 1, duration: 0.2, ease: "elastic.out(1, 0.35)" }, g + 0.36);
+    tl.to(hand, { yPercent: -160, opacity: 0, duration: 0.14, ease: "power2.in" }, g + 0.38);
   }
 
-  // topic words: each arrives with its object; the paired hero swells while its word is on stage
-  q(".topic").forEach((w, i) => {
-    const dir = i % 2 ? 1 : -1;
-    const at = s + 0.15 + i * 0.36;
-    tl.fromTo(w, { x: `${dir * 90}vw`, opacity: 0, rotation: dir * 4 },
-      { x: `${-dir * 8}vw`, opacity: 1, rotation: -dir * 2, duration: 1.1, ease: "power2.out", immediateRender: false }, at);
-    tl.to(w, { x: `${-dir * 110}vw`, opacity: 0, duration: 1, ease: "power1.in" }, at + 1.5);
-    const heroes = q(`.orb[data-topic="${i}"] .orb-item`);
-    if (heroes.length) {
-      tl.fromTo(heroes, { "--hs": 1 }, { "--hs": 1.4, duration: 0.4, ease: "back.out(2)", immediateRender: false }, at + 0.6);
-      tl.to(heroes, { "--hs": 1, duration: 0.5, ease: "power1.inOut" }, at + 1.5);
-    }
-  });
+  // the dive: "AI" comes back to the centre and the camera flies through it into Eeman's lab
+  const dive = (w: HTMLElement, at: number) => {
+    tl.fromTo(w, { x: 0, y: "-16vh", opacity: 0, scale: 0.55 }, { x: 0, y: "-16vh", opacity: 1, scale: 1.15, duration: 0.22, ease: "power2.out", immediateRender: false }, at);
+    tl.to(w, { scale: 9, opacity: 0, duration: 0.42, ease: "power2.in" }, at + 0.22);
+  };
+  dive(words[0], s + 3.12);
 
   const sticker = one(".c5-text .headline");
   tl.fromTo(sticker, { autoAlpha: 0, scale: 0.86, rotation: -7 },
@@ -201,7 +214,9 @@ export function buildCh05(api: SceneAPI, s: number): number {
   /* ================= B. the AI lab ================= */
   const a = s + 3.6;
   const ai = one(".c5-ai");
-  api.layerIn(ai, a, 0.25);
+  api.layerIn(ai, a, 0.2);
+  // …continuing the push-in: the lab arrives slightly small and settles
+  tl.fromTo(ai, { scale: 0.84 }, { scale: 1, duration: 0.6, ease: "power2.out", immediateRender: false }, a);
   api.fieldTo("lab", a, 0.8);
   const aiLabel = ai.querySelector(".beat-label")!;
   tl.fromTo(aiLabel, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, a + 0.05);
@@ -256,6 +271,9 @@ export function buildCh05(api: SceneAPI, s: number): number {
   const armKit = one(".ai-arm");
   const geo = { fall: 200 };
   const measure = () => {
+    // measure in the lab's own (unscaled) frame
+    const sc = gsap.getProperty(ai, "scale");
+    gsap.set(ai, { scale: 1 });
     const lo = gsap.getProperty(lower, "rotation");
     const up = gsap.getProperty(upper, "rotation");
     // layout position of the arm (offsetLeft/Top ignore its entrance transform) + gripper offset
@@ -275,6 +293,7 @@ export function buildCh05(api: SceneAPI, s: number): number {
     chipD.style.left = `${g2.x}px`;
     chipD.style.top = `${g2.y}px`;
     geo.fall = Math.max(40, ai.clientHeight * 0.95 - chipD.offsetHeight / 2 - g2.y);
+    gsap.set(ai, { scale: sc });
   };
   measure();
   ScrollTrigger.addEventListener("refreshInit", measure);
@@ -302,13 +321,16 @@ export function buildCh05(api: SceneAPI, s: number): number {
   const aOut = a + 3.65;
   // the whole lab clears out together (label, arm and the dropped chip too)
   // before the architect's table arrives: no cross-fade of two beats
-  tl.to([aiLabel, server, laptop, gpu, nn, armKit, chipD, ...(head ? [head] : [])], { y: "-12vh", opacity: 0, duration: 0.35, stagger: 0.025, ease: "power2.in" }, aOut - 0.1);
+  // the camera pushes on through the lab, and dives through ARCHITECTURE into Viju's table
+  tl.to(ai, { scale: 1.3, autoAlpha: 0, duration: 0.35, ease: "power2.in" }, aOut - 0.1);
+  dive(words[2], aOut - 0.2);
   api.layerOut(ai, aOut + 0.45, 0.05);
 
   /* ================= C. the architect ================= */
   const b = a + 3.8;
   const arch = one(".c5-arch");
-  api.layerIn(arch, b, 0.25);
+  api.layerIn(arch, b, 0.2);
+  tl.fromTo(arch, { scale: 0.84 }, { scale: 1, duration: 0.6, ease: "power2.out", immediateRender: false }, b);
   api.fieldTo("drafting", b, 0.8);
   tl.fromTo(arch.querySelector(".beat-label")!, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", immediateRender: false }, b + 0.05);
 
