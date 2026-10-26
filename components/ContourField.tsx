@@ -119,8 +119,10 @@ export default function ContourField() {
       if (f.ripple > 0.001) {
         const dx = x - f.rippleX * W;
         const dy = yy - f.rippleY * H;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        d += f.ripple * H * 0.04 * Math.sin(dist * 0.032 - t * 4.2) * Math.exp(-dist / (minWH * 0.55));
+        // softened radius (no cusp at the centre) and a slope cap: amplitude ×
+        // wavenumber stays < 1, so neighbouring lines never fold over each other
+        const dist = Math.sqrt(dx * dx + dy * dy + 900);
+        d += f.ripple * Math.min(H * 0.04, 30) * Math.sin(dist * 0.021 - t * 4.2) * Math.exp(-dist / (minWH * 0.55));
       }
       // bends + mouse part the lines around a point. The push is a smooth odd
       // function of the vertical offset (tanh, not a sign flip) so a line that

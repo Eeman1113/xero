@@ -33,6 +33,8 @@ export type SceneAPI = {
   small: boolean;
   /** start a chapter at `at` (defaults to the end of the timeline); returns its start time */
   chapter: (id: string, at?: number) => number;
+  /** this scene's own live preset copy (tween its numbers for one-off field accents) */
+  field: FieldPreset;
   /** tween the shared ContourField to a preset */
   fieldTo: (name: PresetName, at: number, duration?: number, ease?: string) => void;
   /** fire an anime.js text reveal when the playhead passes `at` (reverses on scroll-back) */
@@ -116,6 +118,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
           q,
           one,
           small,
+          field: fieldPreset,
           chapter: (id, at) => {
             const time = at ?? tl.duration();
             chapters.push({ id, time });

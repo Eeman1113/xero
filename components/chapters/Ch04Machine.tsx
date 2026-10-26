@@ -6,6 +6,7 @@ import { MicKit } from "../kits/Kits";
 import { STORY } from "@/lib/story";
 import type { ObjectName } from "@/lib/assets";
 import type { SceneAPI } from "@/lib/useScrollScene";
+import { field } from "@/lib/field";
 
 const KEYS = ["W", "T", "?", "CTRL", "Z", "⌘", "ALT", "DEL", "!", "TAB"];
 
@@ -150,7 +151,8 @@ export function buildCh04(api: SceneAPI, s: number): number {
   // X E R O: four keys rain in from depth and land in a row, each one PRESSED as it lands
   const xks = q(".xk");
   xks.forEach((k, i) => {
-    const land = s + 2.15 + i * 0.16;
+    // they land only once the headline has gone (out at s + 2.4): nothing falls through the copy
+    const land = s + 2.55 + i * 0.14;
     const img = k.querySelector<HTMLElement>(".xk-img")!;
     const glow = k.querySelector<HTMLElement>(".xk-glow")!;
     tl.fromTo(k, { y: "-48vh", x: `${(i - 1.5) * -6}vw`, scale: 3, rotation: (i % 2 ? 1 : -1) * 28, opacity: 0 },
@@ -163,13 +165,17 @@ export function buildCh04(api: SceneAPI, s: number): number {
 
   // the space bar SLAMS down under the word like a rubber stamp; the letters jump
   const space = one(".xk-space");
-  const slam = s + 2.15 + 4 * 0.16 + 0.12;
+  const slam = s + 2.55 + 4 * 0.14 + 0.1;
   tl.fromTo(space, { y: "-30vh", scale: 2.4, rotation: -6, opacity: 0 },
     { y: 0, scale: 1, rotation: 0, opacity: 1, duration: 0.22, ease: "power4.in", immediateRender: false }, slam - 0.22);
   tl.fromTo(space.querySelector(".xk-img"), { scaleY: 1 }, { scaleY: 0.72, scaleX: 1.04, transformOrigin: "50% 100%", duration: 0.04, immediateRender: false }, slam);
   tl.to(space.querySelector(".xk-img"), { scaleY: 1, scaleX: 1, duration: 0.3, ease: "elastic.out(1, 0.3)" }, slam + 0.04);
   tl.fromTo(space.querySelector(".xk-glow"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1.3, duration: 0.05, immediateRender: false }, slam);
   tl.to(space.querySelector(".xk-glow"), { opacity: 0, scale: 1.7, duration: 0.4 }, slam + 0.05);
+  // …and the slam sends a shockwave through the contour lines from under the word
+  tl.fromTo(field, { rippleX: small ? 0.5 : 0.68, rippleY: small ? 0.52 : 0.88 }, { rippleX: small ? 0.5 : 0.68, rippleY: small ? 0.52 : 0.88, duration: 0.01, immediateRender: false }, slam - 0.02);
+  tl.fromTo(api.field, { ripple: 0 }, { ripple: 1.4, duration: 0.05, ease: "power2.out", immediateRender: false }, slam);
+  tl.to(api.field, { ripple: 0, duration: 0.7, ease: "power2.out" }, slam + 0.05);
   tl.to(xks, { y: -14, duration: 0.07, ease: "power2.out", stagger: 0.015 }, slam + 0.01);
   tl.to(xks, { y: 0, duration: 0.25, ease: "bounce.out", stagger: 0.015 }, slam + 0.09);
 
@@ -198,15 +204,14 @@ export function buildCh04(api: SceneAPI, s: number): number {
   tl.fromTo(mic, { y: "40vh", scale: 0.6, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.6)", immediateRender: false }, pAt + 0.6);
 
   const end = pAt + 3.1;
-  // keyboard + mic drop out of the bottom of the frame (no giant cropped zoom)
-  // (portrait: the long-form owns the lower half, so they lift out the top instead)
-  tl.to([kb, mic], small
-    ? { y: "-60vh", opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.in" }
-    : { y: "75vh", rotationX: 20, opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.in" }, end - 0.6);
-  // the word leaves as one piece: the space bar and the letters lift off together
-  tl.to([space, ...xks], { y: "-60vh", rotation: (i: number) => (i % 2 ? 30 : -30), opacity: 0, duration: 0.5, stagger: 0.025, ease: "power2.in" }, end - 0.65);
-  tl.to(q(".xk-acc"), { scale: 0.4, opacity: 0, duration: 0.35, ease: "power2.in" }, end - 0.6);
-  tl.to(one(".c4-prompt"), { opacity: 0, duration: 0.3 }, end - 0.4);
+  // the machine powers off like an old CRT: the whole frame collapses into a
+  // bright scan line, then a dot — one quick, deliberate exit instead of
+  // half-faded objects drifting off the edges
+  const off = end - 0.32;
+  tl.fromTo(layer, { scaleY: 1, scaleX: 1, filter: "brightness(1)" },
+    { scaleY: 0.004, filter: "brightness(2.6)", duration: 0.2, ease: "power3.in", transformOrigin: "50% 50%", immediateRender: false }, off);
+  // autoAlpha (not opacity): scrolling back must also restore visibility after layerOut
+  tl.to(layer, { scaleX: 0, autoAlpha: 0, duration: 0.12, ease: "power2.in" }, off + 0.2);
   api.layerOut(layer, end + 0.15, 0.1);
   return end;
 }
