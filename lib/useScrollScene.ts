@@ -5,6 +5,7 @@ import { field, PRESETS, registerFieldOwner, type FieldPreset, type PresetName }
 import { registerRegion } from "./hud";
 import { revealIn, revealOut } from "./reveal";
 import { REDUCED_QUERY, SMALL_QUERY } from "./motion";
+import { registerFocusStop } from "./focusStops";
 
 function snapshotField() {
   const { bends, follower, follower2, ...rest } = field;
@@ -46,6 +47,8 @@ export type SceneAPI = {
   /** layer visibility helpers */
   layerIn: (el: Element, at: number, duration?: number) => void;
   layerOut: (el: Element, at: number, duration?: number) => void;
+  /** keyboard focus stop: Tab reaches `el` with the story scrolled to timeline time `at` */
+  focusStop: (el: HTMLElement, at: number) => void;
   /** run when the scene is torn down (matchMedia change / unmount) */
   cleanup: (fn: () => void) => void;
 };
@@ -103,6 +106,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
         const cues: Cue[] = [];
         const cleanups: (() => void)[] = [];
         const chapters: { id: string; time: number }[] = [];
+        const focusAt: { el: HTMLElement; at: number }[] = [];
         let preset: PresetName = opts.startPreset;
         const fieldPreset: FieldPreset = { ...PRESETS[opts.startPreset] };
 
@@ -168,6 +172,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
             tl.to(el, { autoAlpha: 0, duration }, at);
           },
           cleanup: (fn) => cleanups.push(fn),
+          focusStop: (el, at) => focusAt.push({ el, at }),
         };
 
         // CSS `translate: -50% -50%` centring: GSAP folds the individual
@@ -262,6 +267,17 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
         });
 
         const unregField = registerFieldOwner({ start: () => st.start, preset: fieldPreset });
+        const unregFocus = focusAt.map(({ el, at }) =>
+          registerFocusStop({
+            el,
+            scroll: () => st.start + (at / Math.max(0.001, tl.duration())) * (st.end - st.start),
+            // jump the scrub to the target instead of easing towards it
+            settle: () => {
+              st.getTween()?.progress(1);
+              tl.progress(Math.min(1, Math.max(0, (window.scrollY - st.start) / Math.max(1, st.end - st.start))));
+            },
+          }),
+        );
 
         // HUD: map the actual scroll position inside this pin to a chapter
         const unreg = registerRegion({
@@ -289,6 +305,7 @@ export function useScrollScene(ref: RefObject<HTMLElement | null>, opts: SceneOp
           live.kill();
           unreg();
           unregField();
+          unregFocus.forEach((u) => u());
           st.kill();
           tl.kill();
         };

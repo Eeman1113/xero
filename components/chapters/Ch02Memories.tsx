@@ -57,7 +57,9 @@ export function Ch02Layer() {
       </div>
       <div className="c2-pols">
         {POLAROIDS.map((p, i) => (
-          <figure className={`pol pol${i}`} key={p.name} onClick={(e) => flipPol(e.currentTarget, !e.currentTarget.classList.contains("is-flipped"))}>
+          <figure className={`pol pol${i}`} key={p.name} tabIndex={0} role="button" aria-label={`Flip the polaroid: ${p.alt}`}
+            onClick={(e) => flipPol(e.currentTarget, !e.currentTarget.classList.contains("is-flipped"))}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flipPol(e.currentTarget, !e.currentTarget.classList.contains("is-flipped")); } }}>
             <div className="pol-inner">
               <div className="pol-front">
                 <Pic name={p.name} alt={p.alt} className="pol-pic" />
@@ -186,6 +188,8 @@ export function buildCh02(api: SceneAPI, s: number): number {
     // then they float away
     tl.to(p, { y: `${f.y - 70}vh`, rotation: f.r * 2.4, opacity: 0, duration: 0.8, ease: "power1.in" }, shut + 3.15 + i * 0.06);
   });
+  // keyboard: Tab visits each print while the fan is on screen
+  pols.forEach((p) => api.focusStop(p, shut + 2.95));
   // the camera lifts away once it has printed everything
   tl.to(cam, { y: "-40vh", scale: 0.55, opacity: 0, duration: 0.55, ease: "power2.in" }, shut + 1.6);
 

@@ -220,6 +220,7 @@ export function buildCh08(api: SceneAPI, s: number): number {
   });
   tl.fromTo(one(".c8-hint"), { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, snap + 0.3);
   tl.fromTo(q(".c8-mic"), { y: "40vh", opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out", immediateRender: false }, fin + 0.4);
+  api.focusStop(one(".bigplay"), fin + 1.7);
   // hold the final frame for a beat
   tl.to({}, { duration: 1 }, fin + 1.6);
   return fin + 2.4;

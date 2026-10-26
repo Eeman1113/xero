@@ -3,7 +3,8 @@ import { useEffect, useLayoutEffect } from "react";
 import Lenis from "lenis";
 import { animate } from "animejs";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { setLenis } from "@/lib/lenis";
+import { setLenis, getLenis } from "@/lib/lenis";
+import { focusStops, type FocusStop } from "@/lib/focusStops";
 import { prefersReduced, isSmall } from "@/lib/motion";
 import ContourField from "./ContourField";
 import Grain from "./Grain";
@@ -16,6 +17,7 @@ import SceneRoad from "./scenes/SceneRoad";
 import ListenSection from "./listen/ListenSection";
 import Footer from "./listen/Footer";
 import type { SiteFeed } from "@/lib/feedTypes";
+import { FeedContext } from "@/lib/feedContext";
 
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
@@ -57,6 +59,48 @@ export default function Experience({ feed }: { feed: SiteFeed }) {
       // never keep a kit hidden forever (offline / blocked image)
       window.setTimeout(done, 15000);
     });
+  }, []);
+
+  // keyboard: Tab walks the story's interactive pieces in order, scrolling the
+  // pinned scenes to each one first (hidden layers can't take focus natively)
+  useEffect(() => {
+    if (prefersReduced()) return;
+    const go = (st: FocusStop) => {
+      const y = Math.round(st.scroll());
+      const lenis = getLenis();
+      if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+      else window.scrollTo(0, y);
+      ScrollTrigger.update();
+      st.settle();
+      st.el.focus({ preventScroll: true });
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || e.altKey || e.ctrlKey || e.metaKey) return;
+      const stops = focusStops();
+      if (!stops.length) return;
+      const ae = document.activeElement as HTMLElement | null;
+      const i = stops.findIndex((s) => s.el === ae);
+      if (i >= 0) {
+        const j = i + (e.shiftKey ? -1 : 1);
+        if (j < 0 || j >= stops.length) return; // leave the story: normal DOM order takes over
+        e.preventDefault();
+        go(stops[j]);
+        return;
+      }
+      // entering the story forwards from the header (skip link / HUD)
+      if (!e.shiftKey && ae && ae.closest(".hud, .skip-link") && ae === lastHudFocusable()) {
+        e.preventDefault();
+        go(stops[0]);
+      }
+    };
+    const lastHudFocusable = () => {
+      const all = Array.from(document.querySelectorAll<HTMLElement>(".skip-link, .hud a, .hud button")).filter(
+        (el) => getComputedStyle(el).visibility !== "hidden",
+      );
+      return all[all.length - 1] ?? null;
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, []);
 
   // refresh pin positions once fonts + images settle (art may be swapped any time)
@@ -137,7 +181,15 @@ export default function Experience({ feed }: { feed: SiteFeed }) {
   }, []);
 
   return (
-    <>
+    <FeedContext.Provider value={feed}>
+      <a className="skip-link" href="#listen" onClick={(e) => {
+        e.preventDefault();
+        const ls = document.getElementById("listen");
+        getLenis()?.scrollTo("#listen", { immediate: true, force: true });
+        if (!getLenis()) ls?.scrollIntoView();
+        (ls?.querySelector<HTMLElement>("button, a[href]"))?.focus({ preventScroll: true });
+      }}>Skip to episodes</a>
+      <Hud />
       <ContourField />
       <main className="story">
         <SceneOrigins />
@@ -148,8 +200,7 @@ export default function Experience({ feed }: { feed: SiteFeed }) {
         <Footer />
       </main>
       <Grain />
-      <Hud />
       <Intro />
-    </>
+    </FeedContext.Provider>
   );
 }
