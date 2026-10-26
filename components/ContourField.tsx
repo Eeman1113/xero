@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { field, PRESETS, applyFieldOwner } from "@/lib/field";
 import { prefersReduced, isSmall } from "@/lib/motion";
+import { audioLevel } from "@/lib/playing";
 
 /**
  * The connective tissue of the site: ~40 stacked neon contour lines with a
@@ -71,6 +72,8 @@ export default function ContourField() {
 
     const PI = Math.PI;
     const ys = new Float32Array(200);
+    /** smoothed audio level: the lines "talk" while an episode plays */
+    let voice = 0;
 
     /** y of line i at pixel x (shared by renderer + follower) */
     const lineY = (i: number, x: number, t: number, ph: number, out: { a: number; w: number }) => {
@@ -111,6 +114,7 @@ export default function ContourField() {
         Math.sin(u * PI * 1.35 + v * 1.25 + t * 0.07 + ph * 0.55) *
         (0.62 + 0.38 * Math.sin(v * PI * 2 + t * 0.05 + ph * 0.3));
       d += f.amp * H * 0.034 * Math.sin(u * f.freq * 7 + v * 2.1 - t * 0.45 + ph * 1.2);
+      if (voice > 0.002) d += voice * H * 0.022 * Math.sin(u * 9.5 - t * 6.5 + v * 1.7) * Math.sin(u * PI);
       d += f.amp * H * 0.017 * Math.sin(u * f.freq * 13.3 - v * 3.3 + t * 0.7 + ph * 0.8);
       d += f.tilt * (u - 0.5) * H * 0.45;
       d *= dS;
@@ -171,6 +175,7 @@ export default function ContourField() {
       const dt = Math.min(0.05, time - last || 0.016);
       last = time;
       if (!reduced) t += dt;
+      voice += ((reduced ? 0 : audioLevel(time)) - voice) * 0.18;
       const ph = window.scrollY / Math.max(1, H) * 0.32;
       mouse.x += (mouse.tx - mouse.x) * 0.08;
       mouse.y += (mouse.ty - mouse.y) * 0.08;

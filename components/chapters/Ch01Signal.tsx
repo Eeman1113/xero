@@ -2,6 +2,7 @@ import Reveal from "../ui/Reveal";
 import { STORY } from "@/lib/story";
 import type { SceneAPI } from "@/lib/useScrollScene";
 import { gsap } from "@/lib/gsap";
+import { field } from "@/lib/field";
 
 /** 01 — THE SIGNAL: lines emerge, XERO fills in letter by letter. */
 export function Ch01Layer() {
@@ -39,6 +40,9 @@ export function buildCh01(api: SceneAPI): number {
   gsap.set(fills, { clipPath: "inset(100% 0% 0% 0%)" });
 
   api.fieldTo("signal", s + 0.05, 1.2);
+  // the lines part around the wordmark as it fills in, and close again as we fly through it
+  const lens = field.bends[1];
+  tl.fromTo(lens, { s: 0, x: 0.5, y: 0.46, r: small ? 0.2 : 0.3 }, { s: 0.5, duration: 0.7, ease: "sine.inOut", immediateRender: false }, s + 0.05);
   tl.to(fills, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, stagger: 0.06, ease: "power2.out" }, s + 0.05);
   tl.fromTo(one(".c1-kicker"), { opacity: 1 }, { opacity: 0.85, duration: 0.6 }, s + 0.2);
   api.reveal(one(".c1-tag"), s + 0.45);
@@ -49,6 +53,7 @@ export function buildCh01(api: SceneAPI): number {
   tl.to(one(".c1-title"), { scale: small ? 1.8 : 2.6, opacity: 0, duration: 0.65, ease: "power2.in" }, out);
   tl.to(ls, { x: (i: number) => (i - 3) * (small ? 18 : 60), duration: 0.65, ease: "power2.in" }, out);
   tl.to([one(".c1-tag"), one(".c1-copy"), one(".c1-meta"), one(".c1-kicker")], { y: -80, opacity: 0, duration: 0.5, stagger: 0.04 }, out + 0.05);
+  tl.to(lens, { s: 0, duration: 0.5, ease: "power2.in" }, out);
   api.layerOut(layer, out + 0.6, 0.15);
   return out + 0.4;
 }
