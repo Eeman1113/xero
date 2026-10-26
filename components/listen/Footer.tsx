@@ -27,6 +27,7 @@ export default function Footer() {
       </div>
       <div className="ft-meta mono">
         <span>© XERO — two best friends, one microphone</span>
+        <span>hosted by Eeman × Viju</span>
         <span>made with too many opinions</span>
         <a href="#" onClick={(e) => { e.preventDefault(); scrollToTarget(0, 4); }}>back to the signal ↑</a>
       </div>

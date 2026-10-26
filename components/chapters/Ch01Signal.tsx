@@ -22,6 +22,7 @@ export function Ch01Layer() {
       <div className="c1-meta mono">
         <span>EST. NO IDEA WHAT WE WERE DOING</span>
         <span>HINGLISH · 2 FRIENDS · 1 MIC</span>
+        <span>HOSTED BY EEMAN × VIJU</span>
       </div>
     </div>
   );
