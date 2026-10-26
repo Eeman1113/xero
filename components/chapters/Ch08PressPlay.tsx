@@ -98,11 +98,13 @@ export function buildCh08(api: SceneAPI, s: number): number {
   api.fieldTo("play", s, 1.8, "power2.inOut");
 
   // the collage settles behind the title
-  tl.to(one(".c7-collage"), { scale: small ? 0.6 : 0.5, x: 0, y: 0, opacity: 0, duration: 1.2, ease: "power2.inOut" }, s);
+  tl.to(one(".c7-collage"), { scale: small ? 0.6 : 0.5, x: 0, y: 0, duration: 1.2, ease: "power2.inOut" }, s);
+  // …and is gone before the closing line reveals over it
+  tl.to(one(".c7-collage"), { opacity: 0, duration: 0.4, ease: "power1.in" }, s);
   tl.to(one(".c7-text"), { opacity: 0, duration: 0.3 }, s);
 
   // closing line reveals first and stays as the headline above the title
-  api.reveal(one(".c8-closer"), s + 0.3);
+  api.reveal(one(".c8-closer"), s + 0.35);
   tl.fromTo(one(".c8-closer"), { opacity: 1 }, { opacity: 0.75, duration: 0.4, immediateRender: false }, s + 1.5);
 
   const fin = s + 1.4;
@@ -110,7 +112,7 @@ export function buildCh08(api: SceneAPI, s: number): number {
     { yPercent: 0, opacity: 1, rotation: 0, duration: 0.5, stagger: 0.05, ease: "power3.out", immediateRender: false }, fin);
   api.reveal(one(".c8-copy"), fin + 0.45);
   tl.fromTo(one(".bigplay"), { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)", immediateRender: false }, fin + 0.6);
-  tl.fromTo(one(".c8-hint"), { opacity: 0 }, { opacity: 0.7, duration: 0.3, immediateRender: false }, fin + 0.9);
+  tl.fromTo(one(".c8-hint"), { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, fin + 0.9);
   tl.fromTo(q(".c8-phones, .c8-mic"), { y: "40vh", opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power2.out", immediateRender: false }, fin + 0.4);
   // hold the final frame for a beat
   tl.to({}, { duration: 1 }, fin + 1.2);

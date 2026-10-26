@@ -114,12 +114,12 @@ export function buildCh06(api: SceneAPI, s: number): number {
   const { tl, q, one, small } = api;
   api.chapter("06", s);
   const layer = one(".ch6");
-  api.layerIn(layer, s, 0.2);
+  api.layerIn(layer, s, 0.06);
   api.fieldTo("wildcard", s, 0.8);
 
   const fan = one(".c6-fan");
   const cards = q(".card");
-  tl.fromTo(fan, { y: "70vh", rotation: -12 }, { y: 0, rotation: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, s + 0.05);
+  tl.fromTo(fan, { y: "48vh", rotation: -12 }, { y: 0, rotation: 0, duration: 0.8, ease: "power2.out", immediateRender: false }, s);
 
   // phones: spread wider than the card width so the flipped backs never cover each other
   const spreadX = small ? [-34, -11.5, 11.5, 34] : [-30, -10, 10, 30];
@@ -129,11 +129,31 @@ export function buildCh06(api: SceneAPI, s: number): number {
     tl.fromTo(c, { x: 0, y: 0, rotation: (i - 1.5) * 3 },
       { x: `${spreadX[i]}vw`, y: `${lift[i]}vh`, rotation: rot[i], duration: 1, ease: "power2.inOut", immediateRender: false }, s + 1.0 + i * 0.05);
     // each card flips (anime.js) when the scroll reaches it — and flips back if you scroll up
-    api.cue(s + 2.0 + i * 0.4, () => flipCard(c, true), () => flipCard(c, false));
+    // portrait: they flip once they have re-dealt into the 2×2 grid (below)
+    const flipAt = small ? s + 2.75 + i * 0.3 : s + 2.0 + i * 0.4;
+    api.cue(flipAt, () => flipCard(c, true), () => flipCard(c, false));
   });
 
-  api.reveal(one(".c6-text .headline"), s + 0.3, s + 2.4);
-  tl.to(fan, { y: small ? "-8vh" : "-10vh", scale: small ? 0.85 : 0.82, duration: 0.6, ease: "sine.inOut" }, s + 2.4);
+  api.reveal(one(".c6-text .headline"), s + 0.08, s + 2.4);
+  if (small) {
+    // portrait: a one-row fan is too small to read once flipped, so as the
+    // headline leaves the cards re-deal into a 2×2 grid at 1.5× size
+    // sized so two rows fit between the HUD and the long-form band (12vh → 68vh)
+    const k = () => Math.min(1.5, (0.27 * window.innerHeight) / Math.max(1, cards[0].offsetHeight));
+    const gr = [-3, 2, 2, -3];
+    cards.forEach((c, i) => {
+      const col = i % 2 ? 1 : -1;
+      const row = i < 2 ? -1 : 1;
+      tl.to(c, {
+        // offsets from the card's resting centre (53% down the stage)
+        x: () => col * (cards[0].offsetWidth * k() * 0.5 + window.innerWidth * 0.02),
+        y: () => window.innerHeight * -0.13 + row * (cards[0].offsetHeight * k() * 0.5 + window.innerHeight * 0.008),
+        rotation: gr[i], scale: k, duration: 0.55, ease: "power2.inOut",
+      }, s + 2.4 + i * 0.04);
+    });
+  } else {
+    tl.to(fan, { y: "-10vh", scale: 0.82, duration: 0.6, ease: "sine.inOut" }, s + 2.4);
+  }
   api.prompter(one(".c6-prompt"), s + 2.6, 2.6);
 
   // reactions pop up around the fan as the conversation derails
@@ -147,9 +167,14 @@ export function buildCh06(api: SceneAPI, s: number): number {
   }
 
   const end = s + 5.6;
-  tl.to(cards, { x: 0, y: "-6vh", rotation: 0, duration: 0.5, ease: "power2.in" }, end - 0.6);
-  tl.to(fan, { y: "-90vh", rotation: 10, duration: 0.45, ease: "power2.in" }, end - 0.25);
-  tl.to(one(".c6-prompt"), { opacity: 0, duration: 0.3 }, end - 0.3);
-  api.layerOut(layer, end + 0.2, 0.05);
-  return end + 0.25;
+  // the hand is gathered: every card turns face-down first, so no flipped back
+  // ever slides under another one, then the deck is pocketed (shrinks + spins
+  // into the centre: it never sweeps across the copy or the HUD)
+  api.cue(end - 0.82, () => cards.forEach((c) => flipCard(c, false)), () => cards.forEach((c) => flipCard(c, true)));
+  tl.to(cards, { x: 0, y: "-6vh", rotation: 0, scale: 1, duration: 0.42, ease: "power2.inOut" }, end - 0.72);
+  tl.to(fan, { scale: 0.12, rotation: 24, duration: 0.34, ease: "power2.in" }, end - 0.32);
+  tl.to(fan, { opacity: 0, duration: 0.1 }, end - 0.1);
+  tl.to(one(".c6-prompt"), { opacity: 0, duration: 0.3 }, end - 0.35);
+  api.layerOut(layer, end + 0.05, 0.03);
+  return end + 0.08;
 }

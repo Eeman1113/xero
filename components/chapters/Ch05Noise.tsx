@@ -306,7 +306,7 @@ export function buildCh05(api: SceneAPI, s: number): number {
   api.layerOut(ai, aOut + 0.45, 0.05);
 
   /* ================= C. the architect ================= */
-  const b = a + 4.0;
+  const b = a + 3.8;
   const arch = one(".c5-arch");
   api.layerIn(arch, b, 0.25);
   api.fieldTo("drafting", b, 0.8);
@@ -315,8 +315,8 @@ export function buildCh05(api: SceneAPI, s: number): number {
   // the roll unrolls across the table, the sheet is revealed behind it
   const paper = one(".ar-paper");
   const roll = one(".ar-roll");
-  tl.fromTo(paper, { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.8, ease: "power2.inOut", immediateRender: false }, b + 0.2);
-  tl.fromTo(roll, { left: "-4%", rotation: 0, opacity: 1 }, { left: "96%", rotation: 540, duration: 0.8, ease: "power2.inOut", immediateRender: false }, b + 0.2);
+  tl.fromTo(paper, { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "power2.inOut", immediateRender: false }, b + 0.08);
+  tl.fromTo(roll, { left: "-4%", rotation: 0, opacity: 1 }, { left: "96%", rotation: 540, duration: 0.7, ease: "power2.inOut", immediateRender: false }, b + 0.08);
   tl.to(roll, { opacity: 0, y: "-8vh", duration: 0.25, ease: "power2.in" }, b + 1.0);
 
   const tsq = one(".ar-tsq");
@@ -363,8 +363,9 @@ export function buildCh05(api: SceneAPI, s: number): number {
   tl.to(one(".c5-words"), { opacity: 0, duration: 0.3 }, c);
   api.prompter(one(".c5-prompt"), c + 0.1, 2.6);
   const end = c + 2.95;
-  tl.to(cu, { y: "-70vh", opacity: 0, duration: 0.45, stagger: 0.04, ease: "power2.in" }, end - 0.5);
-  tl.to(one(".c5-prompt"), { opacity: 0, duration: 0.3 }, end - 0.4);
-  api.layerOut(layer, end - 0.05, 0.05);
+  // the snacks pop away where they float (never flying up across the HUD)
+  tl.to(cu, { scale: 0, rotation: (i: number) => (i % 2 ? 40 : -40), duration: 0.3, stagger: 0.03, ease: "back.in(2)" }, end - 0.32);
+  tl.to(one(".c5-prompt"), { opacity: 0, duration: 0.25 }, end - 0.25);
+  api.layerOut(layer, end + 0.1, 0.03);
   return end;
 }

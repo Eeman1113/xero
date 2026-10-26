@@ -75,8 +75,8 @@ export function buildCh03(api: SceneAPI, s: number): number {
   // low-left (where the near contour lines are), climbs along the contrail
   // and is gone off the top-right into the sky before the headline arrives.
   const plane = one(".c3-plane");
-  tl.fromTo(plane, { x: "-62vw", y: "40vh", scale: 0.34, rotation: 10, opacity: 1 },
-    { x: "-26vw", y: "10vh", scale: 0.56, rotation: -8, duration: 0.55, ease: "power1.in", immediateRender: false }, s + 0.15);
+  tl.fromTo(plane, { x: "-50vw", y: "34vh", scale: 0.4, rotation: 10, opacity: 1 },
+    { x: "-26vw", y: "10vh", scale: 0.56, rotation: -8, duration: 0.6, ease: "power1.out", immediateRender: false }, s + 0.1);
   tl.to(plane, { x: "12vw", y: "-22vh", scale: 0.7, rotation: -14, duration: 0.55, ease: "none" }, s + 0.7);
   tl.to(plane, { x: "84vw", y: "-36vh", scale: 0.32, rotation: -12, duration: 0.55, ease: "power1.out" }, s + 1.25);
 
@@ -126,10 +126,10 @@ export function buildCh03(api: SceneAPI, s: number): number {
       { scale: 1, rotation: tilt[i], opacity: 1, y: 0, duration: 0.2, ease: "back.out(2.6)", immediateRender: false }, at);
   });
   // the plane comes back for a high pass across the sky… and its wake peels them off
-  tl.set(plane, { x: "-72vw", y: "-26vh", scale: 0.28, rotation: -2, opacity: 1 }, end - 1.0);
-  tl.to(plane, { x: "74vw", y: "-33vh", scale: 0.3, rotation: -6, duration: 0.9, ease: "sine.inOut" }, end - 0.98);
+  tl.set(plane, { x: "-72vw", y: "-26vh", scale: 0.28, rotation: -2, opacity: 1 }, end - 1.12);
+  tl.to(plane, { x: "74vw", y: "-33vh", scale: 0.3, rotation: -6, duration: 0.9, ease: "sine.inOut" }, end - 1.1);
   notes.forEach((n, i) => {
-    const at = end - 0.62 + i * 0.09;
+    const at = end - 0.76 + i * 0.09;
     // lift a corner first (peel), then flutter up and away on the wake
     tl.to(n, { skewY: -9, scaleY: 0.9, rotation: tilt[i] - 14, transformOrigin: "100% 0%", duration: 0.12, ease: "power1.out" }, at);
     tl.to(n, { x: `${22 + i * 8}vw`, y: `${-62 - i * 6}vh`, rotation: tilt[i] + (i % 2 ? 160 : -200), skewX: 18, skewY: 6, scale: 0.6, opacity: 0, duration: 0.55, ease: "power1.in" }, at + 0.12);

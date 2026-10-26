@@ -69,14 +69,15 @@ export function buildCh07(api: SceneAPI, s: number): number {
   const { tl, q, one, small } = api;
   api.chapter("07", s);
   const layer = one(".ch7");
-  api.layerIn(layer, s, 0.2);
+  api.layerIn(layer, s, 0.06);
   api.fieldTo("journey", s, 0.8);
 
   /* ---- beat A: the road (s → s+2.7). The van and the auto ride their
      contour lines all the way across; the roadside passes by. ---- */
   const fol = field.follower;
-  tl.fromTo(fol, { on: 0, t: -0.04 }, { on: 1, t: 0.1, duration: 0.3, immediateRender: false }, s + 0.08);
-  tl.to(fol, { t: 1.06, duration: 2.3, ease: "sine.inOut" }, s + 0.45);
+  tl.fromTo(fol, { t: 0.03 }, { t: 0.12, duration: 0.3, immediateRender: false }, s);
+  tl.fromTo(fol, { on: 0 }, { on: 1, duration: 0.06, immediateRender: false }, s);
+  tl.to(fol, { t: 1.06, duration: 2.4, ease: "sine.inOut" }, s + 0.3);
   tl.to(fol, { on: 0, duration: 0.05 }, s + 2.76);
   // the auto: starts behind on a nearer line and overtakes (Mumbai rules)
   const f2 = field.follower2;
@@ -87,7 +88,7 @@ export function buildCh07(api: SceneAPI, s: number): number {
   // roadside: the board is far away (slow, high, fades into the distance before
   // it reaches the headline); the sign is close (fast, low) and crosses fully
   const board = one(".c7-board");
-  tl.fromTo(board, { x: "60vw" }, { x: small ? "-30vw" : "0vw", duration: 2.0, ease: "none", immediateRender: false }, s + 0.3);
+  tl.fromTo(board, { x: "60vw" }, { x: small ? "-30vw" : "0vw", duration: 2.2, ease: "none", immediateRender: false }, s + 0.05);
   tl.to(board, { opacity: 0, duration: 0.45, ease: "power1.in" }, s + 1.85);
   const sign = one(".c7-sign");
   tl.fromTo(sign, { x: "58vw", rotation: 6 }, { x: "-80vw", rotation: -6, duration: 1.4, ease: "none", immediateRender: false }, s + 0.9);
@@ -106,7 +107,7 @@ export function buildCh07(api: SceneAPI, s: number): number {
       b + i * 0.085);
   });
 
-  api.reveal(one(".c7-text .headline"), s + 0.06, s + 2.0);
+  api.reveal(one(".c7-text .headline"), s + 0.02, s + 2.0);
   api.prompter(one(".c7-prompt"), s + 1.9, 2.9);
   const end = s + 5.2;
   tl.to(one(".c7-prompt"), { opacity: 0, duration: 0.3 }, end - 0.35);
