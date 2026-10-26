@@ -43,6 +43,22 @@ export default function Experience({ feed }: { feed: SiteFeed }) {
     };
   }, []);
 
+  // multi-part kits show as one piece: a kit stays hidden until EVERY part has
+  // decoded, so a slow body image can never leave its lens / wheels / reels
+  // floating on their own
+  useEffect(() => {
+    document.querySelectorAll<HTMLElement>(".kit, .veh, .cassette").forEach((kit) => {
+      const imgs = Array.from(kit.querySelectorAll("img"));
+      const pending = imgs.filter((i) => !(i.complete && i.naturalWidth));
+      if (!pending.length) return;
+      kit.dataset.loading = "";
+      const done = () => delete kit.dataset.loading;
+      Promise.all(imgs.map((i) => i.decode().catch(() => undefined))).then(done);
+      // never keep a kit hidden forever (offline / blocked image)
+      window.setTimeout(done, 15000);
+    });
+  }, []);
+
   // refresh pin positions once fonts + images settle (art may be swapped any time)
   useEffect(() => {
     const refresh = () => ScrollTrigger.refresh();

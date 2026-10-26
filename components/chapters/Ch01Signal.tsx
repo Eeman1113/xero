@@ -40,7 +40,7 @@ export function buildCh01(api: SceneAPI): number {
 
   api.fieldTo("signal", s + 0.05, 1.2);
   tl.to(fills, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, stagger: 0.06, ease: "power2.out" }, s + 0.05);
-  tl.fromTo(one(".c1-kicker"), { opacity: 0.9 }, { opacity: 0.35, duration: 0.6 }, s + 0.2);
+  tl.fromTo(one(".c1-kicker"), { opacity: 1 }, { opacity: 0.85, duration: 0.6 }, s + 0.2);
   api.reveal(one(".c1-tag"), s + 0.45);
   api.reveal(one(".c1-copy"), s + 0.95);
 

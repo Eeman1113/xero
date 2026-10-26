@@ -10,7 +10,7 @@
   --cyan: #28e6f0;
   --bg: #000;
   --ink: #f4f1ea;
-  --dim: rgba(244, 241, 234, 0.55);
+  --dim: rgba(244, 241, 234, 0.7);
   --grad: linear-gradient(90deg, var(--pink), var(--orange) 26%, var(--yellow) 50%, var(--green) 74%, var(--cyan));
   --mx: 0;
   --my: 0;
@@ -39,6 +39,10 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+/* a kit is shown only once all of its parts have decoded (see Experience) */
+[data-loading] > * {
+  visibility: hidden;
 }
 /* <picture> only adds a WebP source; keep layout as if the <img> were direct */
 picture {
@@ -1033,7 +1037,8 @@ html.lenis body {
   left: 50%;
   top: 53%;
   translate: -50% -50%;
-  width: clamp(150px, 18vw, 290px);
+  /* height-capped too, so a short landscape window never pushes the fan into the long-form band */
+  width: clamp(130px, min(18vw, 30vh), 290px);
   aspect-ratio: 0.68; /* real ace art is ~390x573 */
   perspective: 1000px;
   cursor: pointer;
@@ -2535,7 +2540,7 @@ html.lenis body {
   .c4-xero { width: calc(4 * 13vw + 3 * 4px); }
   .veh-van { width: 34vw; }
   .veh-auto { width: 27vw; }
-  .c7-board { width: 36vw; top: 40vh; }
+  .c7-board { width: 36vw; top: 31vh; }
   .ai-chip { width: 9vw; }
   .beat-label { top: 11vh; }
   .beat-label h3 { font-size: clamp(2rem, 10vw, 3.6rem); }
