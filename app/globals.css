@@ -1152,6 +1152,8 @@ html.lenis body {
 }
 .c7-prompt {
   z-index: 10;
+  /* the collage is still zooming out behind the long-form: a near-solid band keeps it readable */
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.93) 12%, rgba(0, 0, 0, 0.93) 86%, transparent) !important;
   width: min(40vw, 560px);
 }
 
@@ -2530,9 +2532,14 @@ html.lenis body {
   .cu5 { left: 64vw; top: 37vh; width: 19vw; }
 }
 @media (min-width: 600px) and (max-width: 1100px) and (orientation: portrait) {
-  .ai-arm { width: 17vw; }
+  .ai-arm { left: 52vw; width: 15vw; }
+  .ai-laptop { left: 6vw; top: 38vh; width: 50vw; }
+  .ai-gpu { width: 34vw; }
   .ar-sheet { left: 12vw; width: 76vw; }
-  .ar-model { left: 28vw; width: 44vw; }
+  .ar-model { left: 32vw; top: 64vh; width: 36vw; }
+  .ar-bld.b1 { width: 24vw; }
+  .ar-bld.b2 { display: none; }
+  .ar-bld.b3 { width: 20vw; }
 }
 
 /* ============================================================
