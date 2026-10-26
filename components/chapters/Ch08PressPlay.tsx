@@ -113,9 +113,9 @@ const WORLDS: { who: string; sig: string; side: "l" | "r"; pieces: Piece[] }[] =
     sig: "Eeman",
     side: "l",
     pieces: [
-      { name: "laptop", x: 44, y: 62, w: 72, r: -4 },
+      { name: "laptop", x: 44, y: 56, w: 70, r: -4 },
       { name: "robot_head", x: 80, y: 34, w: 34, r: 8, z: 2 },
-      { name: "ai_chip", x: 16, y: 78, w: 20, r: -14, z: 3 },
+      { name: "ai_chip", x: 16, y: 70, w: 20, r: -14, z: 3 },
     ],
   },
   {
@@ -123,7 +123,7 @@ const WORLDS: { who: string; sig: string; side: "l" | "r"; pieces: Piece[] }[] =
     sig: "Viju",
     side: "r",
     pieces: [
-      { name: "scale_model", x: 54, y: 60, w: 74, r: 3 },
+      { name: "scale_model", x: 54, y: 56, w: 72, r: 3 },
       { name: "set_square", x: 18, y: 36, w: 30, r: -16, z: 2 },
       { name: "compass", x: 88, y: 70, w: 18, r: 18, z: 3 },
     ],

@@ -175,7 +175,8 @@ export function buildCh05(api: SceneAPI, s: number): number {
   words.forEach((w, i) => {
     const at = t0 + i * SLOT;
     tl.fromTo(w, { x: "30vw", y: 0, opacity: 0, scale: 0.86 }, { x: 0, opacity: 1, scale: 1, duration: 0.22, ease: "power3.out", immediateRender: false }, at);
-    tl.to(w, { x: "-30vw", opacity: 0, scale: 0.92, duration: 0.2, ease: "power2.in" }, at + SLOT - 0.1);
+    // leaves before the next one arrives: two words never share the slot
+    tl.to(w, { x: "-30vw", opacity: 0, scale: 0.92, duration: 0.13, ease: "power2.in" }, at + SLOT - 0.13);
     const orbs = q(`.orb[data-topic="${i}"]`);
     if (!orbs.length) return;
     const hot = (on: boolean) => orbs.forEach((o) => o.classList.toggle("is-hot", on));
@@ -203,7 +204,7 @@ export function buildCh05(api: SceneAPI, s: number): number {
     tl.fromTo(w, { x: 0, y: "-16vh", opacity: 0, scale: 0.55 }, { x: 0, y: "-16vh", opacity: 1, scale: 1.15, duration: 0.22, ease: "power2.out", immediateRender: false }, at);
     tl.to(w, { scale: 9, opacity: 0, duration: 0.42, ease: "power2.in" }, at + 0.22);
   };
-  dive(words[0], s + 3.22);
+  dive(words[0], s + 3.12);
 
   const sticker = one(".c5-text .headline");
   tl.fromTo(sticker, { autoAlpha: 0, scale: 0.86, rotation: -7 },

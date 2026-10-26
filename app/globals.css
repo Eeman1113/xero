@@ -1295,7 +1295,9 @@ html.lenis body {
   filter: var(--cut);
 }
 .c8-sig {
-  margin-top: 0.1em;
+  position: relative;
+  z-index: 4;
+  margin-top: 0.3em;
   font-family: var(--font-hand), cursive;
   font-weight: 600;
   font-size: clamp(1.3rem, min(2.4vw, 4vh), 2.4rem);
@@ -2499,7 +2501,8 @@ html.lenis body {
     display: none;
   }
   .topic {
-    font-size: 17vw;
+    /* the longest word (ARCHITECTURE) must fit inside the gutters */
+    font-size: min(14vw, 9vh);
     top: 64%;
   }
   .c8-world {
