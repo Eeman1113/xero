@@ -378,11 +378,13 @@ html.lenis body {
   inset: -18% -10%;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.4) 45%, transparent 72%);
+  /* closest-side: fully transparent before it reaches the box edges, so the
+     vignette never shows an edge */
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.32) 50%, transparent 100%);
 }
 .prompter.side-right,
 .prompter.side-left {
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 78%);
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.25) 55%, transparent 100%);
 }
 .headline {
   margin: 0;
@@ -432,7 +434,6 @@ html.lenis body {
 }
 .prompter.panel {
   padding: 0 1.2rem;
-  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.72) 18%, rgba(0, 0, 0, 0.72) 82%, transparent);
 }
 .prompter.band {
   left: 0;
@@ -518,7 +519,7 @@ html.lenis body {
 .c1-meta {
   position: absolute;
   right: var(--gutter);
-  bottom: 9vh;
+  bottom: max(9vh, 84px);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -538,20 +539,22 @@ html.lenis body {
   position: absolute;
   inset: 0;
 }
-.frag.f1 { left: 8%; top: 20%; width: clamp(110px, 13vw, 220px); opacity: 0.8; }
-.frag.f2 { left: 44%; top: 14%; width: clamp(40px, 4.5vw, 80px); }
-.frag.f3 { left: 22%; top: 70%; width: clamp(70px, 8vw, 140px); }
-.frag.f4 { left: 3%; top: 42%; width: clamp(80px, 9vw, 150px); }
+/* fragments live on the RIGHT, away from the camera, the nokia and the headline;
+   they are gone before the right-hand long-form starts */
+.frag.f1 { left: 70%; top: 24%; width: clamp(110px, 13vw, 220px); }
+.frag.f2 { left: 78%; top: 58%; width: clamp(40px, 4.5vw, 80px); }
+.frag.f3 { left: 68%; top: 68%; width: clamp(70px, 8vw, 140px); }
+.frag.f4 { left: 86%; top: 10%; width: clamp(80px, 9vw, 150px); }
 .tape {
   position: absolute;
   color: var(--dim);
   white-space: nowrap;
 }
 .tape.t0 { left: 6%; top: 12%; color: var(--pink); animation: blink 1s steps(2) infinite; }
-.tape.t1 { right: 7%; top: 14%; }
-.tape.t2 { right: 12%; top: 80%; font-style: italic; }
-.tape.t3 { left: 12%; top: 48%; }
-.tape.t4 { left: 30%; top: 34%; color: var(--cyan); }
+.tape.t1 { right: 6%; top: 40%; }
+.tape.t2 { left: 64%; top: 8%; font-style: italic; }
+.tape.t3 { left: 20%; top: 57%; }
+.tape.t4 { left: 22%; top: 19%; color: var(--cyan); }
 @keyframes blink {
   50% { opacity: 0.2; }
 }
@@ -707,6 +710,9 @@ html.lenis body {
 .cld {
   left: 50%;
 }
+.cld.far {
+  opacity: 0;
+}
 .c3-text {
   left: var(--gutter);
   top: 14vh;
@@ -781,10 +787,10 @@ html.lenis body {
   text-transform: none;
   opacity: 0;
 }
-.q.q0 { top: 47%; color: var(--yellow); }
-.q.q1 { top: 34%; font-size: clamp(14px, 1.6vw, 22px); }
-.q.q2 { top: 56%; color: var(--green); }
-.q.q3 { top: 90%; color: var(--cyan); }
+.q.q0 { top: 50%; color: var(--yellow); }
+.q.q1 { top: 58%; font-size: clamp(14px, 1.6vw, 22px); }
+.q.q2 { top: 79%; color: var(--green); }
+.q.q3 { top: 86%; color: var(--cyan); }
 
 /* speech-bubble kit: question text sits INSIDE the dark interior */
 .c4-bubbles {
@@ -823,7 +829,7 @@ html.lenis body {
 .bub-bubble_4 .bub-t { inset: 16% 15% 34% 15%; font-style: italic; }
 .c4-b0 { left: 72%; top: 12%; }
 .c4-b1 { left: 4%; top: 62%; }
-.c4-b2 { left: 84%; top: 58%; }
+.c4-b2 { left: auto; right: 3%; top: 58%; }
 .c4-b3 { left: 30%; top: 66%; }
 
 /* X E R O keycaps (+ ESC / ENTER accents) */
@@ -846,6 +852,11 @@ html.lenis body {
 }
 .xk {
   width: clamp(52px, 5vw, 84px);
+}
+/* hidden until their own beat: a timeline rewind can only ever land on hidden */
+.motion .xk,
+.motion .xk-space {
+  opacity: 0;
 }
 .xk-space {
   position: relative;
@@ -1020,7 +1031,7 @@ html.lenis body {
 .card {
   position: absolute;
   left: 50%;
-  top: 48%;
+  top: 53%;
   translate: -50% -50%;
   width: clamp(150px, 18vw, 290px);
   aspect-ratio: 0.68; /* real ace art is ~390x573 */
@@ -1122,10 +1133,11 @@ html.lenis body {
 /* ---------- 07 JOURNEY ---------- */
 .c7-collage {
   position: absolute;
-  /* centred without `translate` (GSAP owns this element's transform) */
-  left: calc(50% - min(42vh, 26vw));
-  top: calc(50% - min(42vh, 26vw));
-  width: min(84vh, 52vw);
+  /* the right half of the frame (the long-form owns the left); no `translate`
+     because GSAP owns this element's transform */
+  left: calc(100% - var(--gutter) - min(78vh, 46vw));
+  top: calc(50% - min(39vh, 23vw));
+  width: min(78vh, 46vw);
   aspect-ratio: 1;
 }
 .col-item {
@@ -1147,13 +1159,15 @@ html.lenis body {
 .c7-text {
   left: var(--gutter);
   top: 12vh;
-  width: min(44vw, 720px);
+  width: min(44vw, 760px);
   z-index: 10;
+}
+/* compact enough to end above the van's road line */
+.c7-text .headline {
+  font-size: clamp(1.6rem, min(3.4vw, 5.6vh), 3.6rem);
 }
 .c7-prompt {
   z-index: 10;
-  /* the collage is still zooming out behind the long-form: a near-solid band keeps it readable */
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.93) 12%, rgba(0, 0, 0, 0.93) 86%, transparent) !important;
   width: min(40vw, 560px);
 }
 
@@ -1190,7 +1204,7 @@ html.lenis body {
 }
 .c8-copy {
   margin: 0;
-  max-width: 40ch;
+  max-width: 62ch;
   font-size: clamp(1.05rem, 1.8vw, 1.6rem);
   font-weight: 600;
 }
@@ -1202,6 +1216,7 @@ html.lenis body {
   width: clamp(84px, min(11vw, 17vh), 160px);
   flex: none;
   aspect-ratio: 1;
+  margin-block: clamp(6px, 2.4vh, 30px);
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -2037,7 +2052,7 @@ html.lenis body {
 
 /* ---------- placements of the v3 kits in the chapters ---------- */
 .c2-nokia {
-  left: 6vw;
+  left: 3vw;
   top: 28vh;
   width: clamp(80px, 8vw, 140px);
   z-index: 3;
@@ -2046,7 +2061,7 @@ html.lenis body {
 .c8-mic { right: 10vw; top: 18vh; width: clamp(80px, 8vw, 140px); }
 .c7-board {
   left: 50%;
-  top: 9vh;
+  top: 14vh;
   width: clamp(170px, 18vw, 300px);
   z-index: 2;
 }
@@ -2085,6 +2100,10 @@ html.lenis body {
   font-size: clamp(2.2rem, 5vw, 5rem);
   line-height: 0.9;
   text-shadow: 0 0 24px #000;
+}
+/* the architect's full name is long: keep it on one line, clear of the sheet */
+.c5-arch .beat-label h3 {
+  font-size: clamp(1.9rem, 3.6vw, 3.8rem);
 }
 .beat-label h3 span {
   display: block;
@@ -2191,7 +2210,7 @@ html.lenis body {
   stroke-dashoffset: 1;
 }
 .ar-roll { top: 6%; width: 13%; z-index: 4; }
-.ar-tsq { left: 34%; top: -26%; width: 12%; z-index: 4; }
+.ar-tsq { left: 34%; top: 62%; width: 12%; z-index: 4; }
 .ar-set { left: 2%; top: 55%; width: 20%; z-index: 4; }
 .ar-ruler { left: 74%; top: 52%; width: 22%; z-index: 4; }
 /* the compass rotates around its NEEDLE (bottom-left tip); the needle sits on the circle's centre */
@@ -2265,7 +2284,6 @@ html.lenis body {
   }
   .prompter.panel {
     padding: 0;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 30%);
   }
   .p-line {
     font-size: 1.05rem;
@@ -2296,10 +2314,16 @@ html.lenis body {
   .c2-cam {
     width: 62vw;
   }
-  .frag.f1 { width: 28vw; }
-  .frag.f2 { width: 10vw; }
-  .frag.f3 { width: 18vw; }
-  .frag.f4 { width: 20vw; }
+  /* portrait: fragments drift through the middle band, between the headline
+     (top) and the long-form (bottom); they are gone before the long-form */
+  .frag.f1 { width: 28vw; left: 4%; top: 52%; }
+  .frag.f2 { width: 10vw; left: 84%; top: 46%; }
+  .frag.f3 { width: 18vw; left: 72%; top: 58%; }
+  .frag.f4 { width: 20vw; left: 10%; top: 64%; }
+  .tape.t0 { top: 47%; }
+  .frag.f4 { display: none; }
+  .tape.t1 { top: 42%; }
+  .tape.t2 { left: 52%; top: 66%; }
   .tape.t3,
   .tape.t4 {
     display: none;
@@ -2345,7 +2369,7 @@ html.lenis body {
     font-size: 11px;
   }
   .c4-b0 { left: 54%; top: 46%; }
-  .c4-b2 { left: 4%; top: 46%; }
+  .c4-b2 { left: 4%; right: auto; top: 46%; }
   .c4-xero {
     left: 50%;
     bottom: auto;
@@ -2389,10 +2413,11 @@ html.lenis body {
   .prompter.band {
     height: 32vh;
   }
+  /* portrait: the long-form owns the lower half, the collage the upper half */
   .c7-collage {
-    width: min(94vw, 62vh);
-    left: calc(50% - min(47vw, 31vh));
-    top: calc(52% - min(47vw, 31vh));
+    width: min(86vw, 44vh);
+    left: calc(50% - min(43vw, 22vh));
+    top: calc(30% - min(43vw, 22vh));
   }
   .c7-sign {
     display: none;
@@ -2466,9 +2491,9 @@ html.lenis body {
     font-size: 10px;
   }
   .c7-collage {
-    width: min(80vw, 56vh);
-    left: calc(50% - min(40vw, 28vh));
-    top: calc(52% - min(40vw, 28vh));
+    width: min(80vw, 46vh);
+    left: calc(50% - min(40vw, 23vh));
+    top: calc(30% - min(40vw, 23vh));
   }
   .stk {
     width: 20vw;
@@ -2490,7 +2515,7 @@ html.lenis body {
   }
   .c7-collage {
     width: min(72vh, 46vw);
-    left: calc(50% - min(36vh, 23vw));
+    left: calc(100% - var(--gutter) - min(72vh, 46vw));
     top: calc(50% - min(36vh, 23vw));
   }
   .c7-sign {
@@ -2506,14 +2531,15 @@ html.lenis body {
 /* v3 kits + ch5 beats in the portrait layout (phones + portrait tablets) */
 @media (max-width: 767px), (max-width: 1100px) and (orientation: portrait) {
   .c2-nokia { left: auto; right: 6vw; top: 56vh; width: 17vw; }
-  .c4-mic { right: 4vw; top: 30vh; width: 17vw; }
+  .c4-mic { right: 3vw; top: 42vh; width: 15vw; }
   .c4-xero { width: calc(4 * 13vw + 3 * 4px); }
   .veh-van { width: 34vw; }
   .veh-auto { width: 27vw; }
-  .c7-board { width: 36vw; top: 12vh; }
+  .c7-board { width: 36vw; top: 40vh; }
   .ai-chip { width: 9vw; }
   .beat-label { top: 11vh; }
   .beat-label h3 { font-size: clamp(2rem, 10vw, 3.6rem); }
+  .c5-arch .beat-label h3 { font-size: clamp(1.6rem, 7.4vw, 3rem); }
   .ai-nn { left: 4vw; top: 23vh; width: 50vw; }
   .ai-gpu { right: 3vw; top: 22vh; width: 40vw; }
   .ai-laptop { left: 8vw; top: 37vh; width: 70vw; }
@@ -2686,6 +2712,7 @@ html.lenis body {
 .rm .stk,
 .rm .bub,
 .rm .xk,
+.rm .xk-space,
 .rm .xk-acc,
 .rm .orb,
 .rm .orb-arm,
@@ -2780,3 +2807,12 @@ html.lenis body {
 .rm .ar-sheet { width: min(90vw, 620px); }
 .rm .lap-loss { stroke-dashoffset: 0; }
 .rm .veh { position: relative; opacity: 1; width: min(60vw, 320px); }
+
+/* phones: fewer ch2 fragments, so the strip between headline and camera stays clean */
+@media (max-width: 767px) {
+  .frag.f3,
+  .tape.t1,
+  .tape.t2 {
+    display: none;
+  }
+}

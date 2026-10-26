@@ -110,15 +110,15 @@ export function buildCh02(api: SceneAPI, s: number): number {
     tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.out", immediateRender: false }, at);
     // clear out before the shutter so nothing drifts under the HUD or into ch3
     // (on phones the long-form takes the lower half, so clear out before it starts)
-    tl.to(el, { opacity: 0, duration: 0.5, ease: "power1.in" }, (small ? s + 1.5 : s + 2.9) + i * 0.03);
+    tl.to(el, { opacity: 0, duration: 0.4, ease: "power1.in" }, (small ? s + 1.5 : s + 1.75) + i * 0.03);
   });
 
   api.reveal(one(".c2-text .headline"), s + 0.8, s + 2.0);
 
   // camera slides aside for the long-form
   if (!small) {
-    tl.to(cam, { x: "-24vw", rotationY: 18, scale: 0.9, duration: 1, ease: "sine.inOut" }, s + 1.6);
-    tl.to(b, { x: 0.26, duration: 1, ease: "sine.inOut" }, s + 1.6);
+    tl.to(cam, { x: "-20vw", rotationY: 18, scale: 0.9, duration: 1, ease: "sine.inOut" }, s + 1.6);
+    tl.to(b, { x: 0.3, duration: 1, ease: "sine.inOut" }, s + 1.6);
   } else {
     tl.to(cam, { y: "-26vh", scale: 0.7, duration: 1, ease: "sine.inOut" }, s + 1.6);
     tl.to(b, { y: 0.24, duration: 1, ease: "sine.inOut" }, s + 1.6);
@@ -134,7 +134,9 @@ export function buildCh02(api: SceneAPI, s: number): number {
   const nk = one(".c2-nokia");
   tl.fromTo(nk, { y: "60vh", rotation: -18 }, { y: "0vh", rotation: -8, duration: 1.1, ease: "power3.out", immediateRender: false }, s + 0.5);
   if (!small) tl.to(nk, { y: "-8vh", rotation: 4, duration: 2.0, ease: "sine.inOut" }, s + 1.6);
-  tl.to(nk, { y: "-90vh", rotation: 18, duration: 0.6, ease: "power2.in" }, small ? s + 1.4 : s + 3.6);
+  // portrait: leaves sideways so it never crosses the headline at the top
+  if (small) tl.to(nk, { x: "40vw", rotation: 24, duration: 0.5, ease: "power2.in" }, s + 1.4);
+  else tl.to(nk, { y: "-90vh", rotation: 18, duration: 0.6, ease: "power2.in" }, s + 3.6);
 
   // cassette: drops in at the top, rides along, leaves before the shutter
   const tape = one(".c2-tape");
@@ -145,13 +147,13 @@ export function buildCh02(api: SceneAPI, s: number): number {
   }
 
   // shutter: the camera re-centres, then for EACH print: button press → flash → eject
-  const shut = s + 4.3;
+  const shut = s + 4.6;
   const btn = one(".cam-btn");
   const camFlash = one(".cam-flash");
   tl.to(cam, { x: 0, y: small ? "-14vh" : "-8vh", scale: small ? 0.8 : 0.95, rotationY: 0, duration: 0.45, ease: "power2.inOut" }, shut);
   tl.to(lens, { rotation: 300, scale: 1.08, duration: 0.45, ease: "power2.inOut" }, shut);
   tl.to(b, { s: 0, x: 0.5, y: 0.5, duration: 0.5 }, shut);
-  tl.to(one(".c2-prompt"), { opacity: 0, duration: 0.3 }, shut);
+  tl.to(one(".c2-prompt"), { opacity: 0, duration: 0.3 }, shut - 0.3);
   tl.fromTo(one(".c2-flash"), { opacity: 0 }, { opacity: 0.32, duration: 0.06, immediateRender: false }, shut + 0.5)
     .to(one(".c2-flash"), { opacity: 0, duration: 0.3 }, shut + 0.56);
 
@@ -188,5 +190,6 @@ export function buildCh02(api: SceneAPI, s: number): number {
   tl.to(cam, { y: "-40vh", scale: 0.55, opacity: 0, duration: 0.55, ease: "power2.in" }, shut + 1.6);
 
   api.layerOut(layer, shut + 4.05, 0.1);
-  return shut + 3.1;
+  // the next chapter starts once the prints have floated away
+  return shut + 3.85;
 }

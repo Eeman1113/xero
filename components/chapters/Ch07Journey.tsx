@@ -72,43 +72,41 @@ export function buildCh07(api: SceneAPI, s: number): number {
   api.layerIn(layer, s, 0.2);
   api.fieldTo("journey", s, 0.8);
 
-  // van: rides the highlighted contour line left → right (the art faces right)
+  /* ---- beat A: the road (s → s+2.7). The van and the auto ride their
+     contour lines all the way across; the roadside passes by. ---- */
   const fol = field.follower;
-  tl.fromTo(fol, { on: 0, t: -0.02 }, { on: 1, t: 0.15, duration: 0.4, immediateRender: false }, s + 0.2);
-  tl.to(fol, { t: 1.02, duration: 3.6, ease: "sine.inOut" }, s + 0.6);
+  tl.fromTo(fol, { on: 0, t: -0.04 }, { on: 1, t: 0.1, duration: 0.3, immediateRender: false }, s + 0.08);
+  tl.to(fol, { t: 1.06, duration: 2.3, ease: "sine.inOut" }, s + 0.45);
+  tl.to(fol, { on: 0, duration: 0.05 }, s + 2.76);
   // the auto: starts behind on a nearer line and overtakes (Mumbai rules)
   const f2 = field.follower2;
-  tl.fromTo(f2, { on: 0, t: -0.12 }, { on: 1, t: 0.0, duration: 0.3, immediateRender: false }, s + 0.5);
-  tl.to(f2, { t: 1.12, duration: 2.1, ease: "power1.in" }, s + 0.8);
-  tl.to(f2, { on: 0, duration: 0.2 }, s + 2.9);
+  tl.fromTo(f2, { on: 0, t: -0.12 }, { on: 1, t: -0.02, duration: 0.25, immediateRender: false }, s + 0.4);
+  tl.to(f2, { t: 1.12, duration: 1.7, ease: "power1.in" }, s + 0.65);
+  tl.to(f2, { on: 0, duration: 0.05 }, s + 2.36);
 
-  // roadside: the board passes far away (slow), the sign passes close (fast) — parallax
+  // roadside: the board is far away (slow, high, fades into the distance before
+  // it reaches the headline); the sign is close (fast, low) and crosses fully
   const board = one(".c7-board");
-  tl.fromTo(board, { x: "70vw" }, { x: "-80vw", duration: 3.6, ease: "none", immediateRender: false }, s + 0.4);
+  tl.fromTo(board, { x: "60vw" }, { x: small ? "-30vw" : "0vw", duration: 2.0, ease: "none", immediateRender: false }, s + 0.3);
+  tl.to(board, { opacity: 0, duration: 0.45, ease: "power1.in" }, s + 1.85);
   const sign = one(".c7-sign");
-  tl.fromTo(sign, { x: "60vw", rotation: 6 }, { x: "-30vw", rotation: -3, duration: 2.0, ease: "none", immediateRender: false }, s + 1.4);
-  tl.to(sign, { x: "-110vw", rotation: -8, duration: 0.8, ease: "power1.in" }, s + 3.4);
-  tl.to(fol, { on: 0, duration: 0.3 }, s + 4.0);
+  tl.fromTo(sign, { x: "58vw", rotation: 6 }, { x: "-80vw", rotation: -6, duration: 1.4, ease: "none", immediateRender: false }, s + 0.9);
 
-  // the collage assembles: objects come in from far away, then the camera pulls back
+  /* ---- beat B: the collage assembles on the RIGHT while the long-form plays
+     on the left; nothing ever sits under the text, nothing is cropped. ---- */
   const box = one(".c7-collage");
   const items = q(".col-item");
-  tl.fromTo(box, { scale: 2.4, x: small ? 0 : "6vw" }, { scale: 1, x: small ? 0 : () => (window.innerWidth < 1200 ? "21vw" : "16vw"), duration: 3.4, ease: "power2.inOut", immediateRender: false }, s + 0.3);
+  const b = s + 2.45;
+  tl.fromTo(box, { scale: small ? 1.06 : 1.1 }, { scale: 1, duration: 2.3, ease: "power2.out", immediateRender: false }, b);
   items.forEach((it, i) => {
     const cx = parseFloat(it.style.left) / 100 - 0.5;
     const cy = parseFloat(it.style.top) / 100 - 0.5;
-    tl.fromTo(it, { x: `${cx * 260}%`, y: `${cy * 260}%`, opacity: 0, rotation: (i % 2 ? 1 : -1) * 25 },
-      { x: 0, y: 0, opacity: 1, rotation: 0, duration: 1.2, ease: "power3.out", immediateRender: false },
-      s + 0.5 + i * 0.13);
+    tl.fromTo(it, { x: `${cx * 90}%`, y: `${cy * 90}%`, scale: 0.6, opacity: 0, rotation: (i % 2 ? 1 : -1) * 18 },
+      { x: 0, y: 0, scale: 1, opacity: 1, rotation: 0, duration: 0.8, ease: "power3.out", immediateRender: false },
+      b + i * 0.085);
   });
-  if (small) {
-    // phones: the long-form owns the lower half, so the collage lifts out of its way
-    tl.to(box, { y: "-17vh", scale: 0.74, duration: 0.9, ease: "sine.inOut" }, s + 1.7);
-  } else {
-    tl.to(box, { scale: 0.86, duration: 0.8, ease: "sine.inOut" }, s + 3.7);
-  }
 
-  api.reveal(one(".c7-text .headline"), s + 0.5, s + 2.0);
+  api.reveal(one(".c7-text .headline"), s + 0.06, s + 2.0);
   api.prompter(one(".c7-prompt"), s + 1.9, 2.9);
   const end = s + 5.2;
   tl.to(one(".c7-prompt"), { opacity: 0, duration: 0.3 }, end - 0.35);

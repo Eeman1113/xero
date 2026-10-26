@@ -11,7 +11,8 @@ export default function SceneModern() {
     startPreset: "takeoff",
     build: (api) => {
       const t = buildCh04(api, 0);
-      buildCh05(api, t);
+      // the orbit swings in while the keyboard is still leaving: no empty beat
+      buildCh05(api, t - 0.4);
     },
   });
   return (

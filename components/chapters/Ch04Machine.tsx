@@ -75,8 +75,6 @@ export function Ch04Layer() {
         <span className="xk-glow" />
         <span className="xk-press"><Pic name="keycap_enter" className="xk-img" /></span>
       </div>
-      <Obj name="nokia" className="c4-nokia" depth={0.7} />
-      <Obj name="coffee_mug" className="c4-mug" depth={1.1} />
       <MicKit className="c4-mic" depth={1.3} />
       <div className="copy-col c4-text">
         <Reveal as="h2" className="headline" text={STORY.ch4.copy} />
@@ -101,9 +99,11 @@ export function buildCh04(api: SceneAPI, s: number): number {
   api.layerIn(layer, s, 0.2);
   api.fieldTo("machine", s, 1);
 
+  // the keyboard is the opening focal point: it rises out of the dark right away
   const kb = one(".c4-kb");
-  tl.fromTo(kb, { y: "62vh", rotationX: 48, scale: 0.5, opacity: 0, transformPerspective: 900 },
-    { y: small ? "4vh" : "14vh", rotationX: 6, scale: small ? 1 : 1.12, opacity: 1, duration: 1.6, ease: "power2.out", immediateRender: false }, s + 0.05);
+  tl.fromTo(kb, { y: "26vh", rotationX: 40, scale: 0.72, transformPerspective: 900 },
+    { y: small ? "4vh" : "14vh", rotationX: 6, scale: small ? 1 : 1.12, duration: 1.0, ease: "power2.out", immediateRender: false }, s);
+  tl.fromTo(kb, { opacity: 0 }, { opacity: 1, duration: 0.22, immediateRender: false }, s);
   tl.to(kb, { y: small ? "-14vh" : "8vh", x: small ? 0 : "18vw", rotationX: 2, rotationZ: -3, scale: small ? 0.8 : 1, duration: 1, ease: "sine.inOut" }, s + 1.7);
 
   // keycaps fly out of the keyboard toward (and past) the viewer
@@ -113,19 +113,20 @@ export function buildCh04(api: SceneAPI, s: number): number {
     const dist = small ? 55 : 70;
     const tx = Math.cos(ang) * dist;
     const ty = Math.sin(ang) * dist * 0.75;
-    const at = s + 0.5 + (i % 8) * 0.34;
+    // all of them are gone before the long-form starts (pAt = s + 2.4)
+    const at = s + 0.3 + (i % 8) * 0.14;
     tl.fromTo(k, { x: `${tx * 0.08}vw`, y: `${ty * 0.08 + 10}vh`, scale: 0.15, opacity: 0, rotation: 0 },
-      { x: `${tx}vw`, y: `${ty}vh`, scale: 2.4, opacity: 1, rotation: (i % 2 ? 1 : -1) * 35, duration: 1.4, ease: "power2.in", immediateRender: false }, at);
-    tl.to(k, { opacity: 0, duration: 0.25 }, at + 1.2);
+      { x: `${tx}vw`, y: `${ty}vh`, scale: 1.7, opacity: 1, rotation: (i % 2 ? 1 : -1) * 35, duration: 1.15, ease: "power2.in", immediateRender: false }, at);
+    tl.to(k, { opacity: 0, duration: 0.25 }, at + 0.9);
   });
 
   // half-asked questions drift across at different depths
   q(".c4-qs .q").forEach((el, i) => {
     const dir = i % 2 ? -1 : 1;
-    const at = s + 0.5 + i * 0.4;
-    tl.fromTo(el, { x: `${dir * 70}vw` }, { x: `${-dir * 70}vw`, duration: 2.6, immediateRender: false }, at);
-    tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.5, immediateRender: false }, at);
-    tl.to(el, { opacity: 0, duration: 0.5 }, at + 2.1);
+    const at = s + 0.4 + i * 0.25;
+    tl.fromTo(el, { x: `${dir * 70}vw` }, { x: `${-dir * 70}vw`, duration: 1.9, immediateRender: false }, at);
+    tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.4, immediateRender: false }, at);
+    tl.to(el, { opacity: 0, duration: 0.4 }, at + 1.4);
   });
 
   // …and the sharper ones pop up in speech bubbles
@@ -140,21 +141,11 @@ export function buildCh04(api: SceneAPI, s: number): number {
     popBubble(api, b, s + a, s + o, i % 2 ? 12 : -12);
   });
 
-  // side objects drift up past the frame, fading before they reach the HUD
-  const nokia = one(".c4-nokia");
-  const mug = one(".c4-mug");
-  tl.fromTo(nokia, { y: "50vh", rotation: -20 }, { y: "-60vh", rotation: 14, duration: 4, immediateRender: false }, s + 0.6);
-  tl.fromTo(nokia, { opacity: 0 }, { opacity: 1, duration: 0.6, immediateRender: false }, s + 0.6);
-  tl.to(nokia, { opacity: 0, duration: 0.7 }, s + 3.6);
-  tl.fromTo(mug, { y: "60vh", rotation: 0 }, { y: "-70vh", rotation: 25, duration: 3.6, immediateRender: false }, s + 1.2);
-  tl.fromTo(mug, { opacity: 0 }, { opacity: 1, duration: 0.6, immediateRender: false }, s + 1.2);
-  tl.to(mug, { opacity: 0, duration: 0.7 }, s + 4.0);
-
   api.reveal(one(".c4-text .headline"), s + 0.9, s + 2.4);
   const pAt = s + 2.4;
   api.prompter(one(".c4-prompt"), pAt, 2.6);
-  // half-asked questions step back while the long-form is being read
-  tl.to(one(".c4-qs"), { opacity: 0.25, duration: 0.5, ease: "sine.inOut" }, pAt - 0.2);
+  // half-asked questions are gone while the long-form is being read
+  tl.to(one(".c4-qs"), { opacity: 0, duration: 0.3, ease: "sine.inOut" }, pAt - 0.2);
 
   // X E R O: four keys rain in from depth and land in a row, each one PRESSED as it lands
   const xks = q(".xk");
@@ -186,8 +177,8 @@ export function buildCh04(api: SceneAPI, s: number): number {
   if (!small) {
     const esc = one(".c4-esc");
     tl.fromTo(esc, { x: "30vw", y: "-10vh", rotation: 40, opacity: 0 },
-      { x: 0, y: 0, rotation: -14, opacity: 1, duration: 0.6, ease: "back.out(1.6)", immediateRender: false }, s + 1.2);
-    tl.to(esc, { y: "-5vh", rotation: -6, duration: 2.4, ease: "sine.inOut" }, s + 1.8);
+      { x: 0, y: 0, rotation: -14, opacity: 1, duration: 0.6, ease: "back.out(1.6)", immediateRender: false }, pAt + 0.05);
+    tl.to(esc, { y: "-5vh", rotation: -6, duration: 2.0, ease: "sine.inOut" }, pAt + 0.65);
     const enter = one(".c4-enter");
     tl.fromTo(enter, { y: "40vh", rotation: 18, opacity: 0 },
       { y: 0, rotation: 6, opacity: 1, duration: 0.55, ease: "back.out(1.5)", immediateRender: false }, pAt + 0.15);
@@ -207,8 +198,13 @@ export function buildCh04(api: SceneAPI, s: number): number {
   tl.fromTo(mic, { y: "40vh", scale: 0.6, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.6)", immediateRender: false }, pAt + 0.6);
 
   const end = pAt + 3.1;
-  tl.to([kb, mic], { scale: 2.6, y: "40vh", opacity: 0, duration: 0.6, ease: "power2.in" }, end - 0.5);
-  tl.to([...xks, space], { y: "-60vh", rotation: (i: number) => (i % 2 ? 30 : -30), opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.in" }, end - 0.65);
+  // keyboard + mic drop out of the bottom of the frame (no giant cropped zoom)
+  // (portrait: the long-form owns the lower half, so they lift out the top instead)
+  tl.to([kb, mic], small
+    ? { y: "-60vh", opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.in" }
+    : { y: "75vh", rotationX: 20, opacity: 0, duration: 0.5, stagger: 0.05, ease: "power2.in" }, end - 0.6);
+  // the word leaves as one piece: the space bar and the letters lift off together
+  tl.to([space, ...xks], { y: "-60vh", rotation: (i: number) => (i % 2 ? 30 : -30), opacity: 0, duration: 0.5, stagger: 0.025, ease: "power2.in" }, end - 0.65);
   tl.to(q(".xk-acc"), { scale: 0.4, opacity: 0, duration: 0.35, ease: "power2.in" }, end - 0.6);
   tl.to(one(".c4-prompt"), { opacity: 0, duration: 0.3 }, end - 0.4);
   api.layerOut(layer, end + 0.15, 0.1);

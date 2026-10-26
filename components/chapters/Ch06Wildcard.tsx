@@ -148,8 +148,8 @@ export function buildCh06(api: SceneAPI, s: number): number {
 
   const end = s + 5.6;
   tl.to(cards, { x: 0, y: "-6vh", rotation: 0, duration: 0.5, ease: "power2.in" }, end - 0.6);
-  tl.to(fan, { y: "-90vh", rotation: 10, duration: 0.5, ease: "power2.in" }, end - 0.15);
+  tl.to(fan, { y: "-90vh", rotation: 10, duration: 0.45, ease: "power2.in" }, end - 0.25);
   tl.to(one(".c6-prompt"), { opacity: 0, duration: 0.3 }, end - 0.3);
-  api.layerOut(layer, end + 0.35, 0.1);
-  return end + 0.4;
+  api.layerOut(layer, end + 0.2, 0.05);
+  return end + 0.25;
 }

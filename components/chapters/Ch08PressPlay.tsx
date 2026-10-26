@@ -23,7 +23,7 @@ export function BigPlay({ onPress, label = "Play the latest XERO episode" }: { o
     if (!el || prefersReduced()) return;
     const rings = el.querySelectorAll(".bp-ring");
     const a = animate(rings, {
-      scale: [1, 1.9],
+      scale: [1, 1.45],
       opacity: [0.7, 0],
       duration: 2200,
       delay: stagger(730),

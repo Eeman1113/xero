@@ -100,7 +100,7 @@ export function Ch05Layer() {
       <div className="beat c5-arch">
         <div className="beat-label">
           <span className="mono">05 · THE NOISE — ARCHITECTURE</span>
-          <h3 className="display">The Architect</h3>
+          <h3 className="display">Adityavijayraj (Viju)<span> · Architect</span></h3>
         </div>
         <div className="ar-ground" aria-hidden="true" />
         <div className="ar-bld b1"><span className="dust" /><Obj name="chawl" depth={0.7} idle={0} /></div>
@@ -300,11 +300,13 @@ export function buildCh05(api: SceneAPI, s: number): number {
   tl.to([lower, upper], { rotation: (i: number) => (i ? POSE.rest.u : POSE.rest.l), duration: 0.5, ease: "power2.inOut" }, rel + 0.15);
 
   const aOut = a + 3.65;
-  tl.to([server, laptop, gpu, nn, ...(head ? [head] : [])], { y: "-12vh", opacity: 0, duration: 0.35, stagger: 0.03, ease: "power2.in" }, aOut - 0.1);
-  api.layerOut(ai, aOut + 0.2, 0.2);
+  // the whole lab clears out together (label, arm and the dropped chip too)
+  // before the architect's table arrives: no cross-fade of two beats
+  tl.to([aiLabel, server, laptop, gpu, nn, armKit, chipD, ...(head ? [head] : [])], { y: "-12vh", opacity: 0, duration: 0.35, stagger: 0.025, ease: "power2.in" }, aOut - 0.1);
+  api.layerOut(ai, aOut + 0.45, 0.05);
 
   /* ================= C. the architect ================= */
-  const b = a + 3.85;
+  const b = a + 4.0;
   const arch = one(".c5-arch");
   api.layerIn(arch, b, 0.25);
   api.fieldTo("drafting", b, 0.8);
@@ -345,8 +347,8 @@ export function buildCh05(api: SceneAPI, s: number): number {
   tl.to(model, { rotation: 4, x: "1vw", duration: 1.0, ease: "sine.inOut" }, b + 3.1);
 
   const bOut = b + 3.9;
-  tl.to(q(".ar-sheet, .ar-model, .ar-bld"), { y: "-10vh", opacity: 0, duration: 0.35, stagger: 0.04, ease: "power2.in" }, bOut - 0.1);
-  api.layerOut(arch, bOut + 0.2, 0.2);
+  tl.to([arch.querySelector(".beat-label")!, ...q(".ar-sheet, .ar-model, .ar-bld")], { y: "-10vh", opacity: 0, duration: 0.35, stagger: 0.04, ease: "power2.in" }, bOut - 0.1);
+  api.layerOut(arch, bOut + 0.3, 0.05);
 
   /* ================= D. culture + the long-form ================= */
   const c = b + 4.0;
@@ -363,6 +365,6 @@ export function buildCh05(api: SceneAPI, s: number): number {
   const end = c + 2.95;
   tl.to(cu, { y: "-70vh", opacity: 0, duration: 0.45, stagger: 0.04, ease: "power2.in" }, end - 0.5);
   tl.to(one(".c5-prompt"), { opacity: 0, duration: 0.3 }, end - 0.4);
-  api.layerOut(layer, end + 0.1, 0.1);
+  api.layerOut(layer, end - 0.05, 0.05);
   return end;
 }

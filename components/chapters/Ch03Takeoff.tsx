@@ -9,13 +9,16 @@ import type { SceneAPI } from "@/lib/useScrollScene";
 
 const STICKIES = ["sticky_1", "sticky_2", "sticky_3"] as const;
 
-/** parallax clouds: depth → size, speed, opacity (far ones dim + slow, near ones big + fast) */
+/** parallax clouds, all in the SKY band above the horizon of the ground plane.
+ *  Far clouds fade in fully inside the frame and drift slowly (they come back
+ *  on the left while the long-form is read); near clouds rush across the whole
+ *  screen with the plane and are gone before the headline. */
 const CLOUDS = [
-  { n: "cloud_2", d: 0.35, top: 14, w: 12, front: false },
-  { n: "cloud_1", d: 0.55, top: 30, w: 17, front: false },
-  { n: "cloud_2", d: 0.8, top: 58, w: 20, front: false },
-  { n: "cloud_1", d: 1.25, top: 6, w: 22, front: true },
-  { n: "cloud_2", d: 1.6, top: 70, w: 28, front: true },
+  { n: "cloud_2", d: 0.35, top: 8, w: 10, front: false, a: [26, 14], b: [-44, -50] },
+  { n: "cloud_1", d: 0.55, top: 17, w: 14, front: false, a: [12, -2], b: [-30, -38] },
+  { n: "cloud_2", d: 0.8, top: 25, w: 12, front: false, a: [32, 20], b: [-14, -24] },
+  { n: "cloud_1", d: 1.25, top: 3, w: 22, front: true, a: [56, -82], b: [0, 0] },
+  { n: "cloud_2", d: 1.6, top: 22, w: 26, front: true, a: [60, -90], b: [0, 0] },
 ] as const;
 
 /** 03 — THE TAKEOFF: the plane crosses BEFORE the words; lines stretch into the distance. */
@@ -30,20 +33,20 @@ export function Ch03Layer() {
             <stop offset="1" stopColor="#28e6f0" />
           </linearGradient>
         </defs>
-        <path className="c3-trail-path" d="M -40 560 C 180 520, 320 430, 470 330 S 760 120, 1060 40" />
-        <path className="c3-trail-path thin" d="M -40 585 C 170 548, 330 455, 480 352 S 770 145, 1060 66" />
+        <path className="c3-trail-path" d="M -60 590 C 100 530, 170 420, 250 365 S 520 200, 640 170 S 880 90, 1080 70" />
+        <path className="c3-trail-path thin" d="M -60 612 C 100 552, 175 445, 255 390 S 525 225, 645 195 S 885 115, 1080 96" />
       </svg>
       <div className="c3-clouds back" aria-hidden="true">
-        {CLOUDS.filter((c) => !c.front).map((c, i) => (
-          <Obj key={i} name={c.n} className="cld" depth={c.d} idle={0.6}
-            style={{ top: `${c.top}%`, width: `${c.w}vw`, opacity: 0.2 + c.d * 0.35, ["--cd" as string]: c.d }} />
+        {CLOUDS.map((c, i) => (c.front ? null :
+          <Obj key={i} name={c.n} className="cld far" depth={c.d} idle={0.6}
+            style={{ top: `${c.top}%`, width: `${c.w}vw`, ["--ci" as string]: i }} />
         ))}
       </div>
       <Obj name="airplane" className="c3-plane" depth={1.8} keep idle={0.8} />
       <div className="c3-clouds front" aria-hidden="true">
-        {CLOUDS.filter((c) => c.front).map((c, i) => (
-          <Obj key={i} name={c.n} className={`cld ${i ? "desk-only" : ""}`} depth={c.d} idle={0.6}
-            style={{ top: `${c.top}%`, width: `${c.w}vw`, opacity: 0.92, ["--cd" as string]: c.d }} />
+        {CLOUDS.map((c, i) => (!c.front ? null :
+          <Obj key={i} name={c.n} className={`cld near ${i > 3 ? "desk-only" : ""}`} depth={c.d} idle={0.6}
+            style={{ top: `${c.top}%`, width: `${c.w}vw`, ["--ci" as string]: i }} />
         ))}
       </div>
       <div className="copy-col c3-text">
@@ -68,20 +71,35 @@ export function buildCh03(api: SceneAPI, s: number): number {
   api.layerIn(layer, s, 0.2);
   api.fieldTo("takeoff", s, 1.3);
 
-  // the plane takes off first — the words wait for it
+  // the plane takes off first — the words wait for it. It leaves the ground
+  // low-left (where the near contour lines are), climbs along the contrail
+  // and is gone off the top-right into the sky before the headline arrives.
   const plane = one(".c3-plane");
-  // climbs, banks into the turn (rotation + a little roll via scaleY), levels off
-  tl.fromTo(plane, { x: "-62vw", y: "38vh", scale: 0.55, rotation: 8, scaleY: 0.55, opacity: 0 },
-    { x: "-20vw", y: "12vh", scale: 0.9, scaleY: 0.9, rotation: -10, opacity: 1, duration: 0.6, ease: "power1.in", immediateRender: false }, s + 0.15);
-  tl.to(plane, { x: "18vw", y: "-14vh", scale: 1.05, scaleY: 0.94, rotation: -16, duration: 0.6, ease: "sine.inOut" }, s + 0.75);
-  tl.to(plane, { x: "70vw", y: "-48vh", scale: 0.3, scaleY: 0.27, rotation: -4, opacity: 0.2, duration: 0.6, ease: "power1.out" }, s + 1.35);
+  tl.fromTo(plane, { x: "-62vw", y: "40vh", scale: 0.34, rotation: 10, opacity: 1 },
+    { x: "-26vw", y: "10vh", scale: 0.56, rotation: -8, duration: 0.55, ease: "power1.in", immediateRender: false }, s + 0.15);
+  tl.to(plane, { x: "12vw", y: "-22vh", scale: 0.7, rotation: -14, duration: 0.55, ease: "none" }, s + 0.7);
+  tl.to(plane, { x: "84vw", y: "-36vh", scale: 0.32, rotation: -12, duration: 0.55, ease: "power1.out" }, s + 1.25);
 
-  // clouds drift past at their own depth (near = faster); they stay for the whole chapter
-  // (near clouds rush past with the plane and are gone before the long-form)
-  q(".cld").forEach((c, i) => {
-    const d = Number(c.style.getPropertyValue("--cd")) || 1;
-    const near = d > 1;
-    tl.fromTo(c, { x: `${60 + i * 9}vw` }, { x: `${-40 - 70 * d}vw`, duration: near ? 2.3 : 5.8, ease: "none", immediateRender: false }, s + 0.05 + (near ? (i % 2) * 0.25 : 0));
+  // clouds: far ones fade in inside the frame and drift; near ones rush past
+  q(".cld").forEach((c) => {
+    const k = CLOUDS[Number(c.style.getPropertyValue("--ci"))];
+    if (!k) return;
+    if (k.front) {
+      const at = s + 0.15 + (k.d > 1.4 ? 0.3 : 0);
+      tl.fromTo(c, { x: `${k.a[0]}vw` }, { x: `${k.a[1]}vw`, duration: 1.15, ease: "none", immediateRender: false }, at);
+      tl.set(c, { opacity: 0 }, at + 1.16);
+      return;
+    }
+    const op = 0.5 + k.d * 0.4;
+    // A: behind the climbing plane (right half of the sky), out before the headline
+    tl.fromTo(c, { x: `${k.a[0]}vw` }, { x: `${k.a[1]}vw`, duration: 1.4, ease: "none", immediateRender: false }, s + 0.1);
+    tl.fromTo(c, { opacity: 0 }, { opacity: op, duration: 0.3, immediateRender: false }, s + 0.1);
+    tl.to(c, { opacity: 0, duration: 0.25 }, s + 1.25);
+    // B: back on the left sky while the long-form plays (headline is gone by then)
+    tl.set(c, { x: `${k.b[0]}vw` }, s + 2.95);
+    tl.to(c, { opacity: op, duration: 0.35 }, s + 3.0);
+    tl.to(c, { x: `${k.b[1]}vw`, duration: 2.8, ease: "none" }, s + 3.0);
+    tl.to(c, { opacity: 0, duration: 0.3 }, api.small ? s + 4.3 : s + 5.55);
   });
 
   // contrail: anime.js drawable, seeked by the scrubbed GSAP playhead
@@ -107,16 +125,16 @@ export function buildCh03(api: SceneAPI, s: number): number {
     tl.fromTo(n, { scale: 2.3, rotation: tilt[i] * 3, opacity: 0, y: "-6vh" },
       { scale: 1, rotation: tilt[i], opacity: 1, y: 0, duration: 0.2, ease: "back.out(2.6)", immediateRender: false }, at);
   });
-  // the plane comes back for a low pass… and its wake peels them off
-  tl.set(plane, { x: "-75vw", y: "44vh", scale: 0.5, rotation: -6, opacity: 0 }, end - 1.0);
-  tl.to(plane, { x: "80vw", y: "16vh", scale: 0.62, rotation: -9, opacity: 1, duration: 0.9, ease: "sine.in" }, end - 0.98);
+  // the plane comes back for a high pass across the sky… and its wake peels them off
+  tl.set(plane, { x: "-72vw", y: "-26vh", scale: 0.28, rotation: -2, opacity: 1 }, end - 1.0);
+  tl.to(plane, { x: "74vw", y: "-33vh", scale: 0.3, rotation: -6, duration: 0.9, ease: "sine.inOut" }, end - 0.98);
   notes.forEach((n, i) => {
-    const at = end - 0.72 + i * 0.09;
-    // lift a corner first (peel), then flutter away on the wake
+    const at = end - 0.62 + i * 0.09;
+    // lift a corner first (peel), then flutter up and away on the wake
     tl.to(n, { skewY: -9, scaleY: 0.9, rotation: tilt[i] - 14, transformOrigin: "100% 0%", duration: 0.12, ease: "power1.out" }, at);
-    tl.to(n, { x: `${32 + i * 10}vw`, y: `${-48 - i * 8}vh`, rotation: tilt[i] + (i % 2 ? 160 : -200), skewX: 18, skewY: 6, scale: 0.7, opacity: 0, duration: 0.65, ease: "power1.in" }, at + 0.12);
+    tl.to(n, { x: `${22 + i * 8}vw`, y: `${-62 - i * 6}vh`, rotation: tilt[i] + (i % 2 ? 160 : -200), skewX: 18, skewY: 6, scale: 0.6, opacity: 0, duration: 0.55, ease: "power1.in" }, at + 0.12);
   });
-  tl.to(one(".c3-prompt"), { opacity: 0, duration: 0.35 }, end - 0.55);
+  tl.to(one(".c3-prompt"), { opacity: 0, duration: 0.3 }, end - 0.8);
   api.layerOut(layer, end + 0.1, 0.1);
   return end;
 }
